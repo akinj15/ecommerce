@@ -1,9 +1,16 @@
 "use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -14,87 +21,188 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useEffect } from "react";
-import { formatCpfCnpj, formatNumber } from "@/lib/format";
+import { useEffect, useState } from "react";
+import { formatCep } from "@/lib/format";
+import { setEndereco } from "@/lib/firebase/querys/setEndereco";
+import { db } from "@/lib/firebase/instances";
+import { useAuth } from "./authProvider";
+import { Endereco } from "@/types/endereco";
+import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
-  nome: z.string(),
-  cpf: z.string(),
-  telefone: z.string(),
+  rua: z.string(),
+  cep: z.string(),
+  numero: z.string(),
+  bairro: z.string(),
+  cidade: z.string(),
+  estado: z.string(),
+  complemento: z.string(),
 });
 
-export function FormEndereco() {
+export function FormEndereco({
+  children,
+  dados,
+}: Readonly<{
+  children: React.ReactNode;
+  dados?: Endereco;
+}>) {
+  const id = dados?.id || "";
+  const [open, setOpen] = useState(false);
+
+  const { toast } = useToast();
+  const { user } = useAuth();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      nome: "",
-      cpf: "",
-      telefone: "",
+      rua: "",
+      cep: "",
+      numero: "",
+      bairro: "",
+      cidade: "",
+      estado: "",
+      complemento: "",
     },
+    values: dados
   });
-  const wTelefone = form.watch("telefone");
-  const wCPF = form.watch("cpf");
+  const wCEP = form.watch("cep");
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+    try {
+      setEndereco(db, user?.uid || "", id, values);
+      form.reset();
+      toast({
+        title: "Sucesso"
+      });
+      setOpen(false)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (e) {
+      toast({
+        title: "Erro"
+      });
+    }
   }
 
   useEffect(() => {
-    console.log(form.getValues("telefone"));
-    form.setValue("telefone", formatNumber(form.getValues("telefone")));
-  }, [form, wTelefone]);
-
-  useEffect(() => {
-    console.log(form.getValues("cpf"));
-    form.setValue("cpf", formatCpfCnpj(form.getValues("cpf")));
-  }, [form, wCPF]);
+    form.setValue("cep", formatCep(form.getValues("cep")));
+  }, [form, wCEP]);
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="nome"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nome</FormLabel>
-              <FormControl>
-                <Input placeholder="Digite seu nome" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="cpf"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nome</FormLabel>
-              <FormControl>
-                <Input placeholder="000.000.000-00" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="telefone"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Telefone</FormLabel>
-              <FormControl>
-                <Input placeholder="(00) 00000-0000" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit">salvar</Button>
-      </form>
-    </Form>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Endereço</DialogTitle>
+          <DialogDescription>
+            Cadastre ou atualize o seu endereço para entregas.
+          </DialogDescription>
+        </DialogHeader>
+        <Form {...form}>
+          <form
+            id={"criaEndereco"}
+            onSubmit={form.handleSubmit(onSubmit)}
+            className=""
+          >
+            <div className="flex space-x-2.5">
+              <FormField
+                control={form.control}
+                name="rua"
+                render={({ field }) => (
+                  <FormItem className="w-3/4">
+                    <FormLabel>Rua*</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Rua ..." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="numero"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>Nº*</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Nº" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <FormField
+              control={form.control}
+              name="cep"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Cep*</FormLabel>
+                  <FormControl>
+                    <Input placeholder="00000-000" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="bairro"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Bairro*</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Bairro" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="cidade"
+              render={({ field }) => (
+                <FormItem className="space-y-0">
+                  <FormLabel>Cidade</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Cidade" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="estado"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Estado</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Estado" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="complemento"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Complemento</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Complemento" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </form>
+        </Form>
+        <DialogFooter>
+          <Button form={"criaEndereco"} type="submit">
+            salvar
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

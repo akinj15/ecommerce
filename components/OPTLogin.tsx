@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { auth } from "@/lib/firebase/instances";
+import { auth, db } from "@/lib/firebase/instances";
 import { ConfirmationResult, RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { FormEvent, useEffect, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
@@ -25,6 +25,8 @@ import {
 
 import { LuPhone } from "react-icons/lu";
 import { useToast } from "@/hooks/use-toast";
+import { formatNumber } from "@/lib/format";
+import { createClienteById } from "@/lib/firebase/querys/setUSer";
 
 export const OPTLogin = () => {
   const { toast } = useToast();
@@ -83,7 +85,8 @@ export const OPTLogin = () => {
       }
 
       try {
-        await confirmationResult?.confirm(opt || "");
+        const res = await confirmationResult?.confirm(opt || "");
+        createClienteById(db, res.user.uid, { telefone: telefone });
         toast({
           title: "Codigo Verificado com sucesso."
         });
@@ -104,9 +107,15 @@ export const OPTLogin = () => {
         return setError("O Captcha não foi inicializado corretamente.");
       }
       try {
-        const confirmationResult = await signInWithPhoneNumber(auth, telefone, recaptchaVerifier);
+        const numero = "+55" + telefone.replace(/\D/gim, "");
+        const confirmationResult = await signInWithPhoneNumber(
+          auth,
+          numero,
+          recaptchaVerifier,
+        );
         
         setConfirmationResult(confirmationResult);
+        
         setSuccess("Codigo enviado com sucesso.");
       } catch (e: any) {
         setResendCountdown(0)
@@ -149,7 +158,7 @@ export const OPTLogin = () => {
                         id="phone"
                         placeholder="Digite seu numero de telefone."
                         value={telefone}
-                        onChange={(e) => setTelefone(e.target.value)}
+                        onChange={(e) => setTelefone(formatNumber(e.target.value))}
                         className="pl-10"
                       />
                       <LuPhone className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />

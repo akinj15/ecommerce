@@ -27,3 +27,20 @@ export const formatNumber = (value: string | undefined) => {
     .replace(/(\d{5})(\d)/, "$1-$2")
     .replace(/(-\d{4})(\d+?)/, "$1");
 };
+
+export const formatCep = (value: string | undefined) => {
+  if (!value) return "";
+
+  return value
+    .replace(/\D/g, "")
+    .replace(/(\d{5})(\d)/, "$1-$2")
+    .replace(/(-\d{3})\d+?$/, "$1");
+};
+
+export const createUuid = () => {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+    const r = (Math.random() * 16) | 0;
+    const v = c == "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+};

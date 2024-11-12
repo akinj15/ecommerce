@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
-import AuthProvider from "@/components/authProvider";
+import ApplicationProvider from "@/components/applicationProvider";
+import { LuBox, LuShoppingCart, LuUser } from "react-icons/lu";
+import { Button } from "@/components/ui/button";
+import { ProfileForm } from "@/components/formUser";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -30,7 +33,39 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-          <AuthProvider>{children}</AuthProvider>
+        <ApplicationProvider>
+          <div className="relative flex min-h-screen flex-col bg-background">
+            <div className="mx-auto w-full border-border/40 dark:border-border min-[1800px]:max-w-[1536px] min-[1800px]:border-x">
+              <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:border-border">
+                <div className="container flex h-14 max-w-screen-2xl items-center">
+                  <div className="mx-2">
+                    <div className="flex items-center space-x-4">
+                      <LuBox className="h-6 w-6" />
+                    </div>
+                  </div>
+                  <div className="flex flex-1 items-center space-x-2 justify-end mx-2">
+                    <Button variant={"ghost"}>
+                      <LuShoppingCart />
+                    </Button>
+                    <ProfileForm>
+                      <Button variant={"ghost"}>
+                        <LuUser />
+                      </Button>
+                    </ProfileForm>
+                  </div>
+                </div>
+              </header>
+              <main className="flex-1">{children}</main>
+              <footer className="py-6 md:px-8 md:py-0">
+                <div className="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
+                  <p className="text-balance text-center text-sm leading-loose text-muted-foreground md:text-left">
+                    Feito por akin fantuci.
+                  </p>
+                </div>
+              </footer>
+            </div>
+          </div>
+        </ApplicationProvider>
         <Toaster />
       </body>
     </html>
