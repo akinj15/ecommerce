@@ -38,7 +38,6 @@ export function ListaProdutos() {
     }).then((data) => setProdutos(data));
   }, [classe]);
 
-  console.log(produtos);
   return (
     <div className="">
       <div className="mb-6">

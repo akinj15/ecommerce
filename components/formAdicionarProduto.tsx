@@ -12,8 +12,12 @@ import {
 
 import Image from "next/image";
 import semImagem from "../public/imagens/semImagem.png";
-import { LuShoppingCart, LuHeart } from "react-icons/lu";
+import { LuShoppingCart, LuPlus, LuMinus } from "react-icons/lu";
 import { Produto } from "@/types/produtos";
+import { setClienteById } from "@/lib/firebase/querys/setUSer";
+import { useApplication } from "./applicationProvider";
+import { useState } from "react";
+import { db } from "@/lib/firebase/instances";
 
 export default function ProdutoModal({
   children,
@@ -22,22 +26,30 @@ export default function ProdutoModal({
   children: React.ReactNode;
   produto: Produto
 }>) {
-  // const [selectedSize, setSelectedSize] = useState<string>("");
-  // const [selectedColor, setSelectedColor] = useState<string>("");
-
-  // const handleAddToCart = () => {
-  //   if (!selectedSize || !selectedColor) {
-  //     alert("Please select both size and color before adding to cart.");
-  //     return;
-  //   }
-  //   console.log(
-  //     `Added ${produto.name} (Size: ${selectedSize}, Color: ${selectedColor}) to cart`
-  //   );
-  //   // Here you would typically dispatch an action to add the product to the cart
-  // };
+  const { user, carrinho, runQuery } = useApplication();
+  const [open, setOpen] = useState(false);
+  const [quantidade, setQuantidade] = useState(1);
+  
+  const handleAddToCart = () => {
+    const novoCarrinho = carrinho || [];
+    novoCarrinho.push({
+      chave: produto.chave,
+      imgUrl: produto.imgUrl,
+      nome: produto.nome,
+      quantidade: quantidade,
+      // cor: produto.cor,
+      // tamanho: produto.tamanho,
+    });
+    setClienteById(
+      db,
+      user?.id || "",
+      { ...user, carrinho: novoCarrinho },
+      setOpen
+    ).then(() => runQuery());
+  };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[625px]">
         <DialogHeader>
@@ -94,13 +106,28 @@ export default function ProdutoModal({
               </div> */}
             </div>
             <div className="w-full h-full flex space-x-2 items-end ">
-              <Button className="flex-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() =>
+                  setQuantidade(quantidade - 1 < 0 ? 0 : quantidade - 1)
+                }
+              >
+                <LuMinus className="w-4 h-4" />
+              </Button>
+              <div className="flex font-semibold ">
+                <span>{quantidade}</span>
+              </div>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setQuantidade(quantidade + 1)}
+              >
+                <LuPlus className="w-4 h-4" />
+              </Button>
+              <Button className="flex-1" onClick={() => handleAddToCart()}>
                 <LuShoppingCart className="w-4 h-4 mr-2" />
                 adicionar
-              </Button>
-              <Button variant="outline" size="icon">
-                <LuHeart className="w-4 h-4" />
-                <span className="sr-only">Add to wishlist</span>
               </Button>
             </div>
           </div>

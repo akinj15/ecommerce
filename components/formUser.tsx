@@ -41,7 +41,7 @@ export function ProfileForm({
   children: React.ReactNode;
 }>) {
   const [open, setOpen] = useState(false);
-  const { user } = useApplication();
+  const { user, runQuery } = useApplication();
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -67,6 +67,7 @@ export function ProfileForm({
       toast({
         title: "Sucesso",
       });
+      runQuery();
     } catch (e) {
       console.log(e)
       toast({
