@@ -7,12 +7,12 @@ const config = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// When deployed, there are quotes that need to be stripped
-Object.keys(config).forEach((key) => {
-  const configValue = config[key] + "";
-  if (configValue.charAt(0) === '"') {
-    config[key] = configValue.substring(1, configValue.length - 1);
-  }
-});
+// // When deployed, there are quotes that need to be stripped
+// Object.keys(config).forEach((key) => {
+//   const configValue = String(config[key]) + "";
+//   if (configValue.charAt(0) === '"') {
+//     config[key] = configValue.substring(1, configValue.length - 1);
+//   }
+// });
 
 export const firebaseConfig = config;
