@@ -1,19 +1,21 @@
 "use client"
 
 import { auth, db } from "@/lib/firebase/instances";
-import { getCarrinhoByClienteId, getClientes, getEnderecoByClienteId } from "@/lib/firebase/querys/getUser";
+import { getCarrinhoByClienteId, getClientes, getEnderecoByClienteId, getEstabelecimentos } from "@/lib/firebase/querys/getUser";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { Loading } from "./loading";
 import { OPTLogin } from "./OPTLogin";
 import { ItemCarrinho, Usuario } from "@/types/usuario";
 import { Endereco } from "@/types/endereco";
+import { Estabelecimento } from "@/types/estabelecimentos";
 
 type ApplicationContextType = {
   userAuth: User | null;
   user: Usuario | null;
   carrinho: ItemCarrinho[] | null;
   endereco: Endereco[] | null;
+  estabelecimentos: Estabelecimento[] | null;
   loading: boolean;
   runQuery: () => void;
 };
@@ -25,6 +27,7 @@ export default function ApplicationProvider({ children }: { children: React.Reac
   const [user, setUser] = useState<Usuario | null>(null);
   const [carrinho, setCarrinho] = useState<ItemCarrinho[] | null>(null);
   const [endereco, setEndereco] = useState<Endereco[] | null>(null);
+  const [estabelecimentos, setEstabelecimentos] = useState<Estabelecimento[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
@@ -65,7 +68,11 @@ export default function ApplicationProvider({ children }: { children: React.Reac
           setEndereco(e);
         }
       });
-      ;
+      getEstabelecimentos(db).then((e) => {
+        if (e) {
+          setEstabelecimentos(e);
+        }
+      });
     }
   }, [user?.id]);
 
@@ -80,6 +87,7 @@ export default function ApplicationProvider({ children }: { children: React.Reac
     carrinho,
     endereco,
     runQuery,
+    estabelecimentos,
   };
 
   if (loading) { 

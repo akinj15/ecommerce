@@ -11,6 +11,7 @@
 import { https } from "firebase-functions/v2";
 import { RecursoService } from "./services";
 import { PrecoService } from "./services/preco.service";
+import { EstabelecimentosService } from "./services/estabelecimentos.service";
 
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
@@ -84,3 +85,22 @@ export const getPreco = https.onRequest(
     }
   }
 );
+
+export const getEstabelecimentos = https.onRequest(async (req, resp) => {
+  try {
+    const estabelecimentoService = new EstabelecimentosService();
+
+    await estabelecimentoService.gravaEstabelecimentos();
+
+    const msg =
+      estabelecimentoService.gravadosQtd +
+      " estabelecimentos gravados com sucesso\n ";
+    console.log(msg);
+    resp.send(msg);
+  } catch (error) {
+    console.error("Erro na requisição HTTP:", error);
+    resp
+      .status(500)
+      .send("Erro ao gravar os dados de estabelecimentos no Firestore.");
+  }
+});

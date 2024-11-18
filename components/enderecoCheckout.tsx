@@ -16,7 +16,7 @@ import {
 import { LuMoreVertical } from "react-icons/lu";
 
 export default function EnderecoCheckout() {
-  const { endereco } = useApplication();
+  const { endereco, estabelecimentos } = useApplication();
   const [ehRetirada, setEhRetirada] = useState(false);
   const [ehEntrga, setEhEntrga] = useState(false);
 
@@ -112,12 +112,16 @@ export default function EnderecoCheckout() {
         <CardContent>
           <Select disabled={!ehRetirada}>
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Theme" />
+              <SelectValue placeholder="Retirada" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="light">Light</SelectItem>
-              <SelectItem value="dark">Dark</SelectItem>
-              <SelectItem value="system">System</SelectItem>
+              {estabelecimentos?.map((e) => {
+                return (
+                  <>
+                    <SelectItem key={e.id} value={e.id}>{e.codigo}</SelectItem>
+                  </>
+                );
+              })}
             </SelectContent>
           </Select>
         </CardContent>

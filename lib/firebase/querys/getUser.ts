@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Endereco } from "@/types/endereco";
+import { Estabelecimento } from "@/types/estabelecimentos";
 import { ItemCarrinho } from "@/types/usuario";
 import { collection, doc, Firestore, getDoc, getDocs } from "firebase/firestore";
 
@@ -80,6 +81,40 @@ export async function getEnderecoByClienteId(
       cidade: dt.cidade,
       complemento: dt.complemento,
       estado: dt.estado,
+    });
+  });
+  return res;
+}
+
+export async function getEstabelecimentos(
+  db: Firestore,
+) {
+  const querySnapshot = await getDocs(
+    collection(db, "estabelecimentos")
+  );
+  const res: Estabelecimento[] = [];
+  querySnapshot.forEach((doc) => {
+    const dt = doc.data();
+    console.log(dt)
+    res.push({
+      id: doc.id,
+      uf: dt.uf,
+      empresa: dt.empresa,
+      codigo: dt.codigo,
+      cidade: dt.cidade,
+      bairro: dt.bairro,
+      chave: dt.chave,
+      email: dt.email,
+      fone: dt.fone,
+      endereco: dt.endereco,
+      cnpj: dt.cnpj,
+      locescritu: dt.locescritu ? {
+        chave: dt.locescritu.chave,
+        nome: dt.locescritu.nome,
+        codigo: dt.locescritu.codigo,
+      } : null,
+      imagem: dt.imagem,
+
     });
   });
   return res;
