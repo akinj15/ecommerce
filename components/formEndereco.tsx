@@ -1,208 +1,281 @@
-// "use client";
-// import { zodResolver } from "@hookform/resolvers/zod";
-// import { useForm } from "react-hook-form";
-// import { z } from "zod";
-// import {
-//   Dialog,
-//   DialogContent,
-//   DialogDescription,
-//   DialogFooter,
-//   DialogHeader,
-//   DialogTitle,
-//   DialogTrigger,
-// } from "@/components/ui/dialog";
-// import { Button } from "@/components/ui/button";
-// import {
-//   Form,
-//   FormControl,
-//   FormField,
-//   FormItem,
-//   FormLabel,
-//   FormMessage,
-// } from "@/components/ui/form";
-// import { Input } from "@/components/ui/input";
-// import { useEffect, useState } from "react";
-// import { formatCep } from "@/lib/format";
-// import { setEndereco } from "@/lib/firebase/querys/setEndereco";
-// import { db } from "@/lib/firebase/instances";
-// import { useAuth } from "./authProvider";
-// import { Endereco } from "@/types/endereco";
-// import { useToast } from "@/hooks/use-toast";
+"use client";
 
-// const formSchema = z.object({
-//   rua: z.string(),
-//   cep: z.string(),
-//   numero: z.string(),
-//   bairro: z.string(),
-//   cidade: z.string(),
-//   estado: z.string(),
-//   complemento: z.string(),
-// });
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { useEffect, useState } from "react";
+import { db } from "@/lib/firebase/instances";
+import { setEnderecoByIdCliente } from "@/lib/firebase/querys/setUSer";
+import { Button } from "./ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { useApplication } from "./applicationProvider";
+import { useToast } from "@/hooks/use-toast";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
+import { Endereco } from "@/types/endereco";
 
-// export function FormEndereco({
-//   children,
-//   dados,
-// }: Readonly<{
-//   children: React.ReactNode;
-//   dados?: Endereco;
-// }>) {
-//   const id = dados?.id || "";
-//   const [open, setOpen] = useState(false);
+const formSchema = z.object({
+  rua: z.string(),
+  cep: z.string(),
+  bairro: z.string(),
+  cidade: z.string(),
+  estado: z.string(),
+  uf: z.string(),
+  complemento: z.string(),
+  numero: z.string(),
+});
 
-//   const { toast } = useToast();
-//   const { user } = useAuth();
-//   const form = useForm<z.infer<typeof formSchema>>({
-//     resolver: zodResolver(formSchema),
-//     defaultValues: {
-//       rua: "",
-//       cep: "",
-//       numero: "",
-//       bairro: "",
-//       cidade: "",
-//       estado: "",
-//       complemento: "",
-//     },
-//     values: dados
-//   });
-//   const wCEP = form.watch("cep");
+export function FormEndereco({
+  children,
+  dados,
+}: Readonly<{
+  children: React.ReactNode;
+  dados?: Endereco;
+}>) {
+  const [open, setOpen] = useState(false);
+  const [cep, setCep] = useState("");
+  const { user, runQuery, loading } = useApplication();
+  const [novoEndereco, setNovoEndereco] = useState(!loading && !dados);
+  const { toast } = useToast();
 
-//   function onSubmit(values: z.infer<typeof formSchema>) {
-//     try {
-//       setEndereco(db, user?.uid || "", id, values);
-//       form.reset();
-//       toast({
-//         title: "Sucesso"
-//       });
-//       setOpen(false)
-//     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-//     } catch (e) {
-//       toast({
-//         title: "Erro"
-//       });
-//     }
-//   }
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      rua: "",
+      cep: "",
+      numero: "",
+      bairro: "",
+      cidade: "",
+      estado: "",
+      complemento: "",
+    },
+    values: {
+      rua: dados?.rua || "",
+      cep: dados?.cep || "",
+      numero: dados?.numero || "",
+      bairro: dados?.bairro || "",
+      cidade: dados?.cidade || "",
+      estado: dados?.estado || "",
+      uf: dados?.uf || "",
+      complemento: dados?.complemento || "",
+    },
+  });
 
-//   useEffect(() => {
-//     form.setValue("cep", formatCep(form.getValues("cep")));
-//   }, [form, wCEP]);
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      setEnderecoByIdCliente(db, user?.id || "", values);
+      toast({
+        title: "Sucesso",
+      });
+      runQuery();
+    } catch (e) {
+      console.log(e);
+      toast({
+        title: "Falha ao salvar",
+      });
+    }
+  }
 
-//   return (
-//     <Dialog open={open} onOpenChange={setOpen}>
-//       <DialogTrigger asChild>{children}</DialogTrigger>
-//       <DialogContent className="sm:max-w-[425px]">
-//         <DialogHeader>
-//           <DialogTitle>Endereço</DialogTitle>
-//           <DialogDescription>
-//             Cadastre ou atualize o seu endereço para entregas.
-//           </DialogDescription>
-//         </DialogHeader>
-//         <Form {...form}>
-//           <form
-//             id={"criaEndereco"}
-//             onSubmit={form.handleSubmit(onSubmit)}
-//             className=""
-//           >
-//             <div className="flex space-x-2.5">
-//               <FormField
-//                 control={form.control}
-//                 name="rua"
-//                 render={({ field }) => (
-//                   <FormItem className="w-3/4">
-//                     <FormLabel>Rua*</FormLabel>
-//                     <FormControl>
-//                       <Input placeholder="Rua ..." {...field} />
-//                     </FormControl>
-//                     <FormMessage />
-//                   </FormItem>
-//                 )}
-//               />
-//               <FormField
-//                 control={form.control}
-//                 name="numero"
-//                 render={({ field }) => (
-//                   <FormItem className="flex-1">
-//                     <FormLabel>Nº*</FormLabel>
-//                     <FormControl>
-//                       <Input placeholder="Nº" {...field} />
-//                     </FormControl>
-//                     <FormMessage />
-//                   </FormItem>
-//                 )}
-//               />
-//             </div>
-//             <FormField
-//               control={form.control}
-//               name="cep"
-//               render={({ field }) => (
-//                 <FormItem>
-//                   <FormLabel>Cep*</FormLabel>
-//                   <FormControl>
-//                     <Input placeholder="00000-000" {...field} />
-//                   </FormControl>
-//                   <FormMessage />
-//                 </FormItem>
-//               )}
-//             />
-//             <FormField
-//               control={form.control}
-//               name="bairro"
-//               render={({ field }) => (
-//                 <FormItem>
-//                   <FormLabel>Bairro*</FormLabel>
-//                   <FormControl>
-//                     <Input placeholder="Bairro" {...field} />
-//                   </FormControl>
-//                   <FormMessage />
-//                 </FormItem>
-//               )}
-//             />
-//             <FormField
-//               control={form.control}
-//               name="cidade"
-//               render={({ field }) => (
-//                 <FormItem className="space-y-0">
-//                   <FormLabel>Cidade</FormLabel>
-//                   <FormControl>
-//                     <Input placeholder="Cidade" {...field} />
-//                   </FormControl>
-//                   <FormMessage />
-//                 </FormItem>
-//               )}
-//             />
-//             <FormField
-//               control={form.control}
-//               name="estado"
-//               render={({ field }) => (
-//                 <FormItem>
-//                   <FormLabel>Estado</FormLabel>
-//                   <FormControl>
-//                     <Input placeholder="Estado" {...field} />
-//                   </FormControl>
-//                   <FormMessage />
-//                 </FormItem>
-//               )}
-//             />
-//             <FormField
-//               control={form.control}
-//               name="complemento"
-//               render={({ field }) => (
-//                 <FormItem>
-//                   <FormLabel>Complemento</FormLabel>
-//                   <FormControl>
-//                     <Input placeholder="Complemento" {...field} />
-//                   </FormControl>
-//                   <FormMessage />
-//                 </FormItem>
-//               )}
-//             />
-//           </form>
-//         </Form>
-//         <DialogFooter>
-//           <Button form={"criaEndereco"} type="submit">
-//             salvar
-//           </Button>
-//         </DialogFooter>
-//       </DialogContent>
-//     </Dialog>
-//   );
-// }
+  useEffect(() => {
+    if (cep && cep.length == 8) {
+      fetch(`https://viacep.com.br/ws/${cep}/json/`).then((e) =>
+        e.json().then((data) => {
+          form.setValue("rua", data.logradouro);
+          form.setValue("estado", data.estado);
+          form.setValue("uf", data.uf);
+          form.setValue("cidade", data.localidade);
+          form.setValue("bairro", data.bairro);
+          setNovoEndereco(false);
+        })
+      ).catch(() => {
+        toast({
+          title: "Digite cep novamente.",
+          variant: "destructive"
+        });
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cep]);
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Endereço</DialogTitle>
+          <DialogDescription>Digite o seu cep.</DialogDescription>
+        </DialogHeader>
+        {novoEndereco ? (
+          <>
+            <div className="flex flex-col space-y-1.5">
+              <div className="flex justify-center">
+                <InputOTP
+                  maxLength={8}
+                  value={cep}
+                  onChange={(value) => setCep(value)}
+                >
+                  <InputOTPGroup>
+                    <InputOTPSlot index={0} />
+                    <InputOTPSlot index={1} />
+                    <InputOTPSlot index={2} />
+                    <InputOTPSlot index={3} />
+                    <InputOTPSlot index={4} />
+                  </InputOTPGroup>
+                  <InputOTPSeparator />
+                  <InputOTPGroup>
+                    <InputOTPSlot index={5} />
+                    <InputOTPSlot index={6} />
+                    <InputOTPSlot index={7} />
+                  </InputOTPGroup>
+                </InputOTP>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <Form {...form}>
+              <form
+                id="formUser"
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-8"
+              >
+                <div>
+                  <div className="flex space-x-2.5">
+                    <div className="w-3/4">
+                      <FormField
+                        control={form.control}
+                        name="rua"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Rua</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Digite o nome da sua rua"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <FormField
+                        control={form.control}
+                        name="numero"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Nº</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Nº" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="bairro"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Bairro</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Bairro" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="complemento"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Complemento</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Casa, Vila..." {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className="flex space-x-2.5">
+                    <div className="w-3/4">
+                      <FormField
+                        control={form.control}
+                        name="cidade"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Cidade</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Cidade" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <FormField
+                        control={form.control}
+                        name="uf"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Estado</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Estado" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </Form>
+          </>
+        )}
+        <DialogFooter>
+          {novoEndereco ? (
+            <></>
+          ) : (
+            <>
+              {" "}
+              <Button form="formUser" type="submit">
+                salvar
+              </Button>
+            </>
+          )}
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}

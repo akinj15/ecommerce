@@ -6,5 +6,6 @@ export type Endereco = {
   bairro: string;
   cidade: string;
   estado: string;
+  uf: string;
   complemento: string;
 };

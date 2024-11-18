@@ -1,17 +1,19 @@
 "use client"
 
 import { auth, db } from "@/lib/firebase/instances";
-import { getClientes } from "@/lib/firebase/querys/getUser";
+import { getCarrinhoByClienteId, getClientes, getEnderecoByClienteId } from "@/lib/firebase/querys/getUser";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { Loading } from "./loading";
 import { OPTLogin } from "./OPTLogin";
 import { ItemCarrinho, Usuario } from "@/types/usuario";
+import { Endereco } from "@/types/endereco";
 
 type ApplicationContextType = {
   userAuth: User | null;
   user: Usuario | null;
   carrinho: ItemCarrinho[] | null;
+  endereco: Endereco[] | null;
   loading: boolean;
   runQuery: () => void;
 };
@@ -22,6 +24,7 @@ export default function ApplicationProvider({ children }: { children: React.Reac
   const [userAuth, setUserAuth] = useState<User | null>(null);
   const [user, setUser] = useState<Usuario | null>(null);
   const [carrinho, setCarrinho] = useState<ItemCarrinho[] | null>(null);
+  const [endereco, setEndereco] = useState<Endereco[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
@@ -46,13 +49,24 @@ export default function ApplicationProvider({ children }: { children: React.Reac
 
 
   const runQuery = useCallback(() => {
-    if (user?.id)
+    if (user?.id) {
       getClientes(db, { id: user?.id || "" }).then((e) => {
         if (e) {
           setUser(e);
-          setCarrinho(e.carrinho);
         }
       });
+      getCarrinhoByClienteId(db, { id: user?.id || "" }).then((e) => {
+        if (e) {
+          setCarrinho(e);
+        }
+      });
+      getEnderecoByClienteId(db, { id: user?.id || "" }).then((e) => {
+        if (e) {
+          setEndereco(e);
+        }
+      });
+      ;
+    }
   }, [user?.id]);
 
   useEffect(() => {
@@ -64,6 +78,7 @@ export default function ApplicationProvider({ children }: { children: React.Reac
     user,
     loading,
     carrinho,
+    endereco,
     runQuery,
   };
 

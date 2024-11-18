@@ -14,7 +14,7 @@ import Image from "next/image";
 import semImagem from "../public/imagens/semImagem.png";
 import { LuShoppingCart, LuPlus, LuMinus } from "react-icons/lu";
 import { Produto } from "@/types/produtos";
-import { setClienteById } from "@/lib/firebase/querys/setUSer";
+import { setItemCarrinhoByIdCliente } from "@/lib/firebase/querys/setUSer";
 import { useApplication } from "./applicationProvider";
 import { useState } from "react";
 import { db } from "@/lib/firebase/instances";
@@ -26,26 +26,22 @@ export default function ProdutoModal({
   children: React.ReactNode;
   produto: Produto
 }>) {
-  const { user, carrinho, runQuery } = useApplication();
+  const { user, runQuery } = useApplication();
   const [open, setOpen] = useState(false);
   const [quantidade, setQuantidade] = useState(1);
   
   const handleAddToCart = () => {
-    const novoCarrinho = carrinho || [];
-    novoCarrinho.push({
+    const novoCarrinho = {
       chave: produto.chave,
       imgUrl: produto.imgUrl,
       nome: produto.nome,
       quantidade: quantidade,
-      // cor: produto.cor,
-      // tamanho: produto.tamanho,
+      preco: produto.preco,
+    };
+    setItemCarrinhoByIdCliente(db, user?.id || "", novoCarrinho).then(() => {
+      setOpen(false);
+      runQuery()
     });
-    setClienteById(
-      db,
-      user?.id || "",
-      { ...user, carrinho: novoCarrinho },
-      setOpen
-    ).then(() => runQuery());
   };
 
   return (
@@ -110,12 +106,12 @@ export default function ProdutoModal({
                 variant="ghost"
                 size="icon"
                 onClick={() =>
-                  setQuantidade(quantidade - 1 < 0 ? 0 : quantidade - 1)
+                  setQuantidade(quantidade - 1 < 1 ? 1 : quantidade - 1)
                 }
               >
                 <LuMinus className="w-4 h-4" />
               </Button>
-              <div className="flex font-semibold ">
+              <div className="flex items-center justify-center font-semibold h-8 w-8">
                 <span>{quantidade}</span>
               </div>
               <Button
