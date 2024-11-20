@@ -14,7 +14,6 @@ export async function getClientes(
   let retorno;
   if (docSnap.exists()) {
     const dt = docSnap.data();
-    console.log(dt)
     retorno = {
       id: docSnap.id,
       nome: dt.nome,

@@ -15,7 +15,8 @@ import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CarrinhoCheckout from "@/components/carrinhoCheckout";
 import EnderecoCheckout from "@/components/enderecoCheckout";
-
+import PagamentoCheckout from "@/components/pagamentoCheckout";
+import { NovoPedido } from "@/types/pedido";
 
 export default function Checkout({
   children,
@@ -24,10 +25,10 @@ export default function Checkout({
 }>) {
   // const { user, carrinho, runQuery } = useApplication();
   const [open, setOpen] = useState(false);
-
-  // useEffect(() => {
-
-  // }, [carrinho]);
+  const [pedido, setPedido] = useState<NovoPedido | null>(null);
+  const [estadoTab, setEstadoTab] = useState<
+    "carrinho" | "endereco" | "pagamento" | "flinalização"
+  >("carrinho");
 
 
   return (
@@ -37,21 +38,56 @@ export default function Checkout({
         <DialogHeader>
           <DialogTitle>Checkout</DialogTitle>
         </DialogHeader>
-        <Tabs defaultValue="carrinho" className="h-full">
+        <Tabs defaultValue="carrinho" value={estadoTab} className="h-full">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="carrinho">Carrinho</TabsTrigger>
-            <TabsTrigger value="endereco">Retirada</TabsTrigger>
-            <TabsTrigger value="password">pagamento</TabsTrigger>
-            <TabsTrigger value="password">Finalize</TabsTrigger>
+            <TabsTrigger
+              value="carrinho"
+              onClick={() => setEstadoTab("carrinho")}
+            >
+              Carrinho
+            </TabsTrigger>
+            <TabsTrigger
+              value="endereco"
+              onClick={() => setEstadoTab("endereco")}
+            >
+              Retirada
+            </TabsTrigger>
+            <TabsTrigger
+              value="pagamento"
+              onClick={() => setEstadoTab("pagamento")}
+            >
+              pagamento
+            </TabsTrigger>
+            <TabsTrigger
+              value="flinalização"
+              onClick={() => setEstadoTab("flinalização")}
+            >
+              Finalize
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="carrinho" className="h-[100%]">
-            <CarrinhoCheckout />
+            <CarrinhoCheckout
+              pedido={pedido}
+              setPedido={setPedido}
+              setProximo={setEstadoTab}
+            />
           </TabsContent>
           <TabsContent value="endereco" className="h-[100%]">
-            <EnderecoCheckout />
+            <EnderecoCheckout
+              pedido={pedido}
+              setPedido={setPedido}
+              setProximo={setEstadoTab}
+            />
           </TabsContent>
-          <TabsContent value="password" className="h-[100%]">
-            Change your password here.
+          <TabsContent value="pagamento" className="h-[100%]">
+            <PagamentoCheckout
+              pedido={pedido}
+              setPedido={setPedido}
+              setProximo={setEstadoTab}
+            />
+          </TabsContent>
+          <TabsContent value="flinalização" className="h-[100%]">
+            <PagamentoCheckout />
           </TabsContent>
         </Tabs>
       </DialogContent>

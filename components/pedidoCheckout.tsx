@@ -10,7 +10,6 @@ import { deleteItemCarrinhoByIdCliente, updateItemCarrinhoByIdCliente } from "@/
 
 import Image from "next/image";
 import semImagem from "../public/imagens/semImagem.png";
-import { NovoPedido } from "@/types/pedido";
 
 // Define the structure of a cart item
 interface CartItem {
@@ -67,15 +66,7 @@ const CartItem = ({
   </div>
 );
 
-interface ICarrinhoCheckout {
-  setPedido: (e: NovoPedido) => void;
-  setProximo: (
-    e: "carrinho" | "endereco" | "pagamento" | "flinalização"
-  ) => void;
-  pedido: NovoPedido | null;
-}
-
-export default function CarrinhoCheckout({ setPedido, pedido, setProximo }: ICarrinhoCheckout) {
+export default function CarrinhoCheckout() {
   const { user, carrinho, runQuery } = useApplication();
   const [custoTotal, setCustoTotal] = useState(0);
 
@@ -85,14 +76,14 @@ export default function CarrinhoCheckout({ setPedido, pedido, setProximo }: ICar
 
       carrinho.forEach((item) => {
         valor += item.quantidade * item.preco;
-      });
+      })
       setCustoTotal(valor);
     }
   }, [carrinho]);
 
   const atualizaQuantidade = (carrinho: ItemCarrinho, valor: number) => {
     const novoCarrinho = { ...carrinho };
-
+    
     if (novoCarrinho.quantidade + valor >= 1) {
       novoCarrinho.quantidade += valor;
     }
@@ -105,21 +96,14 @@ export default function CarrinhoCheckout({ setPedido, pedido, setProximo }: ICar
     ).then(() => runQuery());
   };
 
+  
   const removeItem = (id: string) => {
-    deleteItemCarrinhoByIdCliente(db, user?.id || "", id).then(() =>
-      runQuery()
-    );
+    deleteItemCarrinhoByIdCliente(
+      db, 
+      user?.id || "", 
+      id
+    ).then(() => runQuery());
   };
-
-  const finalizaCarrinho = () => {
-    setPedido({
-      produtos: carrinho,
-      endereco: pedido?.endereco || null,
-      pagamento: pedido?.pagamento || null,
-    });
-    setProximo("endereco");
-  };
-
   return (
     <div className="mt-4 grid h-full content-between pb-[4.6rem]">
       {carrinho?.length === 0 ? (
@@ -142,9 +126,7 @@ export default function CarrinhoCheckout({ setPedido, pedido, setProximo }: ICar
               <span>Total:</span>
               <span>${custoTotal.toFixed(2)}</span>
             </div>
-            <Button onClick={() => finalizaCarrinho()} className="w-full">
-              Finalizar Pedido
-            </Button>
+            <Button className="w-full">Finalizar Pedido</Button>
           </div>
         </>
       )}

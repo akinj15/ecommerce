@@ -9,7 +9,7 @@
 
 // import * as logger from "firebase-functions/logger";
 import { https } from "firebase-functions/v2";
-import { RecursoService } from "./services";
+import { PagamentosService, RecursoService } from "./services";
 import { PrecoService } from "./services/preco.service";
 import { EstabelecimentosService } from "./services/estabelecimentos.service";
 
@@ -102,5 +102,26 @@ export const getEstabelecimentos = https.onRequest(async (req, resp) => {
     resp
       .status(500)
       .send("Erro ao gravar os dados de estabelecimentos no Firestore.");
+  }
+});
+
+
+export const getCondicoesDePagamento = https.onRequest(async (req, resp) => {
+  try {
+    const pagamentosService = new PagamentosService();
+
+    await pagamentosService.gravaPagamentos();
+
+    const msg =
+      pagamentosService.gravadosQtd +
+      " condições de pagamento gravados com sucesso\n ";
+    console.log(msg);
+    resp.send(msg);
+  } catch (error) {
+    console.error("Erro na requisição HTTP:", error);
+
+    resp
+      .status(500)
+      .send("Erro ao gravar os dados de pagamentos no Firestore.");
   }
 });
