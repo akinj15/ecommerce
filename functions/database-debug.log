@@ -1,0 +1,9 @@
+11:10:22.748 [NamespaceSystem-akka.actor.default-dispatcher-5] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
+11:10:23.051 [main] INFO com.firebase.server.forge.App$ - Listening at 127.0.0.1:9000
+11:10:30.610 [NamespaceSystem-akka.actor.default-dispatcher-5] INFO com.firebase.core.namespace.NamespaceActor - ecomerce-7bc49-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 264ms, init: 0ms
+11:10:30.792 [NamespaceSystem-blocking-namespace-operation-dispatcher-7] INFO com.firebase.core.namespace.StateManager - Namespace ecomerce-7bc49-default-rtdb status Active to Active
+11:11:21.704 [FirebaseWorkerPool-1-3] WARN com.firebase.core.persistence.backend.dummy.EmulatorMetadataPersistence - Multiple projectIds are not recommended in single project mode. Requested 
+namespace ecomerce-7bc49, but the emulator is configured for ecomerce-7bc49-default-rtdb. To 
+opt-out of single project mode add/set the singleProjectMode: false property in 
+the firebase.json emulators config. 
+11:11:21.715 [NamespaceSystem-akka.actor.default-dispatcher-6] INFO com.firebase.core.namespace.NamespaceActor - ecomerce-7bc49 successfully activated FBKV (SurveyIdle(0)) wait: 6ms, init: 0ms

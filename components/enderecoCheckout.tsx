@@ -26,6 +26,7 @@ import { NovoPedido } from "@/types/pedido";
 
 interface IEnderecoCheckout {
   setPedido: (e: NovoPedido) => void;
+  setVoltaInicio: (e: boolean) => void;
   setProximo: (
     e: "carrinho" | "endereco" | "pagamento" | "flinalização"
   ) => void;
@@ -37,6 +38,7 @@ export default function EnderecoCheckout({
   setPedido,
   pedido,
   setProximo,
+  setVoltaInicio,
 }: IEnderecoCheckout) {
   const { endereco, estabelecimentos } = useApplication();
   const [ehRetirada, setEhRetirada] = useState(false);
@@ -77,108 +79,116 @@ export default function EnderecoCheckout({
     setProximo("pagamento");
   };
 
+  const voltar = () => {
+    setVoltaInicio(true);
+  };
+
   return (
-    <div className="mt-4 h-full pb-[4.6rem] grid content-between ">
-      <div>
-        <Card className="">
-          <CardHeader>
-            <CardTitle>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="entrega"
-                  checked={ehEntrga}
-                  onCheckedChange={(e) => onChangeEntrega(e)}
-                />
-                <label htmlFor="entrega" className="">
-                  Entrega
-                </label>
-              </div>
-            </CardTitle>
-            <CardDescription>
-              Não há endereço cadastrado, cadastre o novo endereço aqui.
-            </CardDescription>
-          </CardHeader>
-          {endereco?.length ? (
-            <>
-              <CardContent>
-                <FormEndereco dados={endereco[0]}>
-                  <div className="flex items-center justify-between">
-                    <div className="">
-                      <h3 className="font-semibold">
-                        {endereco[0].rua + " - " + endereco[0].numero}
-                      </h3>
-                      <p className="text-sm text-gray-500">
-                        {`${endereco[0].bairro} - ${endereco[0].cidade}`}
-                      </p>
-                    </div>
-                    <div>
-                      <LuMoreVertical />
-                    </div>
+    <div className="flex flex-col h-full content-between">
+      <Card className="">
+        <CardHeader>
+          <CardTitle>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="entrega"
+                checked={ehEntrga}
+                onCheckedChange={(e) => onChangeEntrega(e)}
+              />
+              <label htmlFor="entrega" className="">
+                Entrega
+              </label>
+            </div>
+          </CardTitle>
+          <CardDescription>
+            Não há endereço cadastrado, cadastre o novo endereço aqui.
+          </CardDescription>
+        </CardHeader>
+        {endereco?.length ? (
+          <>
+            <CardContent>
+              <FormEndereco dados={endereco[0]}>
+                <div className="flex items-center justify-between">
+                  <div className="">
+                    <h3 className="font-semibold">
+                      {endereco[0].rua + " - " + endereco[0].numero}
+                    </h3>
+                    <p className="text-sm text-gray-500">
+                      {`${endereco[0].bairro} - ${endereco[0].cidade}`}
+                    </p>
                   </div>
-                </FormEndereco>
-              </CardContent>
-            </>
-          ) : (
-            <>
-              <CardFooter className="">
-                <FormEndereco>
-                  <Button className="w-full" disabled={!ehEntrga}>
-                    Cadastre um novo endereço
-                  </Button>
-                </FormEndereco>
-              </CardFooter>
-            </>
-          )}
-        </Card>
+                  <div>
+                    <LuMoreVertical />
+                  </div>
+                </div>
+              </FormEndereco>
+            </CardContent>
+          </>
+        ) : (
+          <>
+            <CardFooter className="">
+              <FormEndereco>
+                <Button className="w-full" disabled={!ehEntrga}>
+                  Cadastre um novo endereço
+                </Button>
+              </FormEndereco>
+            </CardFooter>
+          </>
+        )}
+      </Card>
 
-        <Card className="my-4">
-          <CardHeader>
-            <CardTitle>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="retirada"
-                  checked={ehRetirada}
-                  onCheckedChange={(e) => onChangeRetirada(e)}
-                />
-                <label htmlFor="retirada" className="">
-                  Retirada
-                </label>
-              </div>
-            </CardTitle>
-            <CardDescription>
-              Selecione qual estabelecimento irá ser retirado.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Select
-              disabled={!ehRetirada}
-              value={lugarRetirada}
-              onValueChange={(e) => setLugarRetirada(e)}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Retirada" />
-              </SelectTrigger>
-              <SelectContent>
-                {ehRetirada &&
-                  estabelecimentos?.map((e) => {
-                    return (
-                      <>
-                        <SelectItem key={e.id} value={e.id}>
-                          {e.codigo}
-                        </SelectItem>
-                      </>
-                    );
-                  })}
-              </SelectContent>
-            </Select>
-          </CardContent>
-        </Card>
-      </div>
+      <Card className="my-4">
+        <CardHeader>
+          <CardTitle>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="retirada"
+                checked={ehRetirada}
+                onCheckedChange={(e) => onChangeRetirada(e)}
+              />
+              <label htmlFor="retirada" className="">
+                Retirada
+              </label>
+            </div>
+          </CardTitle>
+          <CardDescription>
+            Selecione qual estabelecimento irá ser retirado.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Select
+            disabled={!ehRetirada}
+            value={lugarRetirada}
+            onValueChange={(e) => setLugarRetirada(e)}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Retirada" />
+            </SelectTrigger>
+            <SelectContent>
+              {ehRetirada &&
+                estabelecimentos?.map((e) => {
+                  return (
+                    <>
+                      <SelectItem key={e.id} value={e.id}>
+                        {e.codigo}
+                      </SelectItem>
+                    </>
+                  );
+                })}
+            </SelectContent>
+          </Select>
+        </CardContent>
+      </Card>
 
-      <div className="mt-auto">
-        <Button className="w-full" onClick={() => finalizaEndereco()}>
-          Selecionar
-        </Button>
+      <div className="mt-auto ">
+        <div className="flex justify-between">
+          <Button className="" variant="ghost" onClick={() => voltar()}>
+            Carrinho
+          </Button>
+
+          <Button className="" onClick={() => finalizaEndereco()}>
+            Selecionar Endereço
+          </Button>
+        </div>
       </div>
     </div>
   );

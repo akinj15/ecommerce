@@ -69,13 +69,19 @@ const CartItem = ({
 
 interface ICarrinhoCheckout {
   setPedido: (e: NovoPedido) => void;
+  setVoltaInicio: (e: boolean) => void;
   setProximo: (
     e: "carrinho" | "endereco" | "pagamento" | "flinalização"
   ) => void;
   pedido: NovoPedido | null;
 }
 
-export default function CarrinhoCheckout({ setPedido, pedido, setProximo }: ICarrinhoCheckout) {
+export default function CarrinhoCheckout({
+  setPedido,
+  pedido,
+  setProximo,
+  setVoltaInicio,
+}: ICarrinhoCheckout) {
   const { user, carrinho, runQuery } = useApplication();
   const [custoTotal, setCustoTotal] = useState(0);
 
@@ -118,15 +124,16 @@ export default function CarrinhoCheckout({ setPedido, pedido, setProximo }: ICar
       pagamento: pedido?.pagamento || null,
     });
     setProximo("endereco");
+    setVoltaInicio(false);
   };
 
   return (
-    <div className="mt-4 grid h-full content-between pb-[4.6rem]">
+    <div className="flex flex-col h-full content-between">
       {carrinho?.length === 0 ? (
         <p className="text-center text-gray-500">Seu Carrinho está vazio</p>
       ) : (
         <>
-          <div className="max-h-450px overflow-auto">
+          <div className="overflow-auto h-[500px]">
             {carrinho?.map((item) => (
               <CartItem
                 key={item.id}

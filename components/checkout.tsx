@@ -11,12 +11,12 @@ import {
 // import { useApplication } from "./applicationProvider";
 import { useState } from "react";
 
-
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CarrinhoCheckout from "@/components/carrinhoCheckout";
 import EnderecoCheckout from "@/components/enderecoCheckout";
 import PagamentoCheckout from "@/components/pagamentoCheckout";
 import { NovoPedido } from "@/types/pedido";
+import PedidoCheckout from "./pedidoCheckout";
+import { LuCreditCard, LuPackage, LuTruck } from "react-icons/lu";
 
 export default function Checkout({
   children,
@@ -26,6 +26,8 @@ export default function Checkout({
   // const { user, carrinho, runQuery } = useApplication();
   const [open, setOpen] = useState(false);
   const [pedido, setPedido] = useState<NovoPedido | null>(null);
+  const [inicioPedido, setInicioPedido] = useState(true);
+
   const [estadoTab, setEstadoTab] = useState<
     "carrinho" | "endereco" | "pagamento" | "flinalização"
   >("carrinho");
@@ -34,62 +36,71 @@ export default function Checkout({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="sm:max-w-[650px] h-full sm:h-[80%] flex flex-col">
+      <DialogContent className="sm:max-w-[650px] h-svh sm:h-[80%] flex flex-col">
         <DialogHeader>
-          <DialogTitle>Checkout</DialogTitle>
+          <DialogTitle>Finelize seu Pedido</DialogTitle>
         </DialogHeader>
-        <Tabs defaultValue="carrinho" value={estadoTab} className="h-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger
-              value="carrinho"
-              onClick={() => setEstadoTab("carrinho")}
-            >
-              Carrinho
-            </TabsTrigger>
-            <TabsTrigger
-              value="endereco"
-              onClick={() => setEstadoTab("endereco")}
-            >
-              Retirada
-            </TabsTrigger>
-            <TabsTrigger
-              value="pagamento"
-              onClick={() => setEstadoTab("pagamento")}
-            >
-              pagamento
-            </TabsTrigger>
-            <TabsTrigger
-              value="flinalização"
-              onClick={() => setEstadoTab("flinalização")}
-            >
-              Finalize
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent value="carrinho" className="h-[100%]">
-            <CarrinhoCheckout
-              pedido={pedido}
-              setPedido={setPedido}
-              setProximo={setEstadoTab}
-            />
-          </TabsContent>
-          <TabsContent value="endereco" className="h-[100%]">
-            <EnderecoCheckout
-              pedido={pedido}
-              setPedido={setPedido}
-              setProximo={setEstadoTab}
-            />
-          </TabsContent>
-          <TabsContent value="pagamento" className="h-[100%]">
-            <PagamentoCheckout
-              pedido={pedido}
-              setPedido={setPedido}
-              setProximo={setEstadoTab}
-            />
-          </TabsContent>
-          <TabsContent value="flinalização" className="h-[100%]">
-            <PagamentoCheckout />
-          </TabsContent>
-        </Tabs>
+
+        {inicioPedido && (
+          <CarrinhoCheckout
+            pedido={pedido}
+            setPedido={setPedido}
+            setProximo={setEstadoTab}
+            setVoltaInicio={setInicioPedido}
+          />
+        )}
+        {!inicioPedido && (
+          <>
+            <div className="flex justify-between">
+              {estadoTab === "endereco" && (
+                <>
+                  <div>
+                    <LuTruck className="mr-2 h-8 w-8" /> Endererço
+                  </div>
+                </>
+              )}
+              {estadoTab === "pagamento" && (
+                <>
+                  <div>
+                    <LuCreditCard className="mr-2 h-8 w-8" /> Pagamento
+                  </div>
+                </>
+              )}
+              {estadoTab === "flinalização" && (
+                <>
+                  <div>
+                    <LuPackage className="mr-2 h-8 w-8" /> Finalizar
+                  </div>
+                </>
+              )}
+            </div>
+
+            {estadoTab === "endereco" && (
+              <EnderecoCheckout
+                pedido={pedido}
+                setPedido={setPedido}
+                setProximo={setEstadoTab}
+                setVoltaInicio={setInicioPedido}
+              />
+            )}
+
+            {estadoTab === "pagamento" && (
+              <PagamentoCheckout
+                pedido={pedido}
+                setPedido={setPedido}
+                setProximo={setEstadoTab}
+              />
+            )}
+
+            {estadoTab === "flinalização" && (
+              <PedidoCheckout
+                pedido={pedido}
+                setPedido={setPedido}
+                setProximo={setEstadoTab}
+              />
+            )}
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );

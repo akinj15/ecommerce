@@ -28,23 +28,24 @@ export default function PagamentoCheckout({
     setPagamentoSelecionado(e);
   };
 
-  const finalizaPagamento = () => {
-
+  const finalizaEndereco = () => {
     if (pagamentoSelecionado) {
-        const novoPedido = {
-          endereco: pedido?.endereco || null,
-          produtos: pedido?.produtos || null,
-          pagamento: pagamentoSelecionado || null,
-        };
-        setPedido(novoPedido);
-        setProximo("flinalização");
+      const novoPedido = {
+        endereco: pedido?.endereco || null,
+        produtos: pedido?.produtos || null,
+        pagamento: pagamentoSelecionado || null,
+      };
+      setPedido(novoPedido);
+      setProximo("flinalização");
     }
-
+  };
+  const voltar = () => {
+    setProximo("endereco");
   };
 
 
   return (
-    <div className="mt-4 h-full pb-[4.6rem] grid content-between ">
+    <div className="mt-4 h-full grid content-between ">
       <div className="">
         {formasPagamentos.map((e) => {
           return (
@@ -65,14 +66,16 @@ export default function PagamentoCheckout({
         })}
       </div>
 
-      <div className="mt-auto pt-4">
-        <Button
-          disabled={!pagamentoSelecionado}
-          className="w-full"
-          onClick={() => finalizaPagamento()}
-        >
-          Selecionar
-        </Button>
+      <div className="mt-auto">
+        <div className="flex justify-between">
+          <Button className="" variant="ghost" onClick={() => voltar()}>
+            voltar
+          </Button>
+
+          <Button className="" onClick={() => finalizaEndereco()}>
+            Selecionar Pagamento
+          </Button>
+        </div>
       </div>
     </div>
   );
