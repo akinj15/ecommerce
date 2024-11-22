@@ -21,6 +21,8 @@ import {
   Dialog,
   DialogContent,
   DialogFooter,
+  DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useApplication } from "./applicationProvider";
@@ -86,10 +88,17 @@ export function ProfileForm({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
+
       <DialogContent className="sm:max-w-[425px]">
-        <div className="flex justify-center mt-2">
-          <LuUser className="h-16 w-16" />
-        </div>
+        <DialogHeader>
+          <DialogTitle>
+            {" "}
+            <div className="flex justify-center mt-2">
+              <LuUser className="h-16 w-16" />
+            </div>
+          </DialogTitle>
+        </DialogHeader>
+
         <Form {...form}>
           <form
             id="formUser"
@@ -172,7 +181,7 @@ export function ProfileForm({
         )}
 
         <DialogFooter>
-          <Button form="formUser" type="submit">
+          <Button form="formUser" type="submit" className="w-full">
             salvar
           </Button>
         </DialogFooter>
