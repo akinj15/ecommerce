@@ -94,7 +94,6 @@ export async function getEstabelecimentos(
   const res: Estabelecimento[] = [];
   querySnapshot.forEach((doc) => {
     const dt = doc.data();
-    console.log(dt)
     res.push({
       id: doc.id,
       uf: dt.uf,

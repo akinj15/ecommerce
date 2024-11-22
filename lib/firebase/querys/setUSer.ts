@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Endereco } from "@/types/endereco";
-import { addDoc, collection, deleteDoc, doc, Firestore, setDoc, updateDoc } from "firebase/firestore";
+import { NovoPedido } from "@/types/pedido";
+import { ItemCarrinho } from "@/types/usuario";
+import { addDoc, collection, deleteDoc, doc, Firestore, setDoc, updateDoc, writeBatch } from "firebase/firestore";
 
 export async function setClienteById(
   db: Firestore,
@@ -53,6 +55,7 @@ export async function setEnderecoByIdCliente(
   id: string,
   dt: Endereco
 ) {
+  console.log("aaa" + id)
   await addDoc(collection(db, "cliente", id, "endereco"), dt);
 }
 
@@ -70,5 +73,24 @@ export async function deleteEnderecoByIdCliente(
   id: string,
   enderecoId: string
 ) {
-  await deleteDoc(doc(db, "cliente", id, "carrinho", enderecoId));
+  await deleteDoc(doc(db, "cliente", id, "endereco", enderecoId));
+}
+
+export async function finalizaPedidoByIdCliente(
+  db: Firestore,
+  item: ItemCarrinho[],
+  userId: string,
+  dt: NovoPedido
+) {
+  const batch = writeBatch(db);
+
+  for (let i = 0; i < item.length; i++) {
+    const e = item[i];
+    const laRef = doc(db, "cliente", userId, "carrinho", e.id);
+    batch.delete(laRef);
+  }
+
+  await addDoc(collection(db, "cliente", userId, "pedido"), dt);
+
+  await batch.commit();
 }

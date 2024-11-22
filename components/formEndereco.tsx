@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { db } from "@/lib/firebase/instances";
-import { setEnderecoByIdCliente } from "@/lib/firebase/querys/setUSer";
+import { setEnderecoByIdCliente, updateEnderecoByIdCliente } from "@/lib/firebase/querys/setUSer";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -53,13 +53,13 @@ export function FormEndereco({
   children: React.ReactNode;
   dados?: Endereco;
 }>) {
-  const [open, setOpen] = useState(false);
+  const [openFormEndereco, setOpenFormEndereco] = useState(false);
   const [cep, setCep] = useState("");
   const { user, runQuery, loading } = useApplication();
   const [novoEndereco, setNovoEndereco] = useState(!loading && !dados);
   const { toast } = useToast();
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const formEndereco = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       rua: "",
@@ -82,13 +82,26 @@ export function FormEndereco({
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmitEndereco(values: z.infer<typeof formSchema>) {
     try {
-      setEnderecoByIdCliente(db, user?.id || "", values);
-      toast({
-        title: "Sucesso",
-      });
-      runQuery();
+      if (dados?.id) {
+        updateEnderecoByIdCliente(db, user?.id || "", dados.id, values).then(() => {
+          toast({
+            title: "Sucesso",
+          });
+          runQuery();
+          setOpenFormEndereco(false);
+        });
+      } else {
+        setEnderecoByIdCliente(db, user?.id || "", values).then(() => {
+          toast({
+            title: "Sucesso",
+          });
+          runQuery();
+          setOpenFormEndereco(false);
+        });
+      }
+
     } catch (e) {
       console.log(e);
       toast({
@@ -101,11 +114,11 @@ export function FormEndereco({
     if (cep && cep.length == 8) {
       fetch(`https://viacep.com.br/ws/${cep}/json/`).then((e) =>
         e.json().then((data) => {
-          form.setValue("rua", data.logradouro);
-          form.setValue("estado", data.estado);
-          form.setValue("uf", data.uf);
-          form.setValue("cidade", data.localidade);
-          form.setValue("bairro", data.bairro);
+          formEndereco.setValue("rua", data.logradouro);
+          formEndereco.setValue("estado", data.estado);
+          formEndereco.setValue("uf", data.uf);
+          formEndereco.setValue("cidade", data.localidade);
+          formEndereco.setValue("bairro", data.bairro);
           setNovoEndereco(false);
         })
       ).catch(() => {
@@ -119,14 +132,14 @@ export function FormEndereco({
   }, [cep]);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={openFormEndereco} onOpenChange={setOpenFormEndereco}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Endereço</DialogTitle>
           <DialogDescription>Digite o seu cep.</DialogDescription>
         </DialogHeader>
-        {novoEndereco ? (
+        {novoEndereco ? ( 
           <>
             <div className="flex flex-col space-y-1.5">
               <div className="flex justify-center">
@@ -154,17 +167,17 @@ export function FormEndereco({
           </>
         ) : (
           <>
-            <Form {...form}>
+            <Form {...formEndereco}>
               <form
-                id="formUser"
-                onSubmit={form.handleSubmit(onSubmit)}
+                id="formEndereco"
+                onSubmit={formEndereco.handleSubmit(onSubmitEndereco)}
                 className="space-y-8"
               >
                 <div>
                   <div className="flex space-x-2.5">
                     <div className="w-3/4">
                       <FormField
-                        control={form.control}
+                        control={formEndereco.control}
                         name="rua"
                         render={({ field }) => (
                           <FormItem>
@@ -182,7 +195,7 @@ export function FormEndereco({
                     </div>
                     <div className="flex-1">
                       <FormField
-                        control={form.control}
+                        control={formEndereco.control}
                         name="numero"
                         render={({ field }) => (
                           <FormItem>
@@ -198,7 +211,7 @@ export function FormEndereco({
                   </div>
                   <div>
                     <FormField
-                      control={form.control}
+                      control={formEndereco.control}
                       name="bairro"
                       render={({ field }) => (
                         <FormItem>
@@ -213,7 +226,7 @@ export function FormEndereco({
                   </div>
                   <div>
                     <FormField
-                      control={form.control}
+                      control={formEndereco.control}
                       name="complemento"
                       render={({ field }) => (
                         <FormItem>
@@ -229,7 +242,7 @@ export function FormEndereco({
                   <div className="flex space-x-2.5">
                     <div className="w-3/4">
                       <FormField
-                        control={form.control}
+                        control={formEndereco.control}
                         name="cidade"
                         render={({ field }) => (
                           <FormItem>
@@ -244,7 +257,7 @@ export function FormEndereco({
                     </div>
                     <div className="flex-1">
                       <FormField
-                        control={form.control}
+                        control={formEndereco.control}
                         name="uf"
                         render={({ field }) => (
                           <FormItem>
@@ -269,7 +282,7 @@ export function FormEndereco({
           ) : (
             <>
               {" "}
-              <Button form="formUser" type="submit">
+              <Button form="formEndereco" type="submit">
                 salvar
               </Button>
             </>

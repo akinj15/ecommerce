@@ -8,17 +8,24 @@ import { Separator } from "@/components/ui/separator";
 import { LuCreditCard, LuMapPin, LuTruck } from "react-icons/lu";
 import { FaPix } from "react-icons/fa6";
 import { CiMoneyBill } from "react-icons/ci";
+import { useApplication } from "./applicationProvider";
+import { db } from "@/lib/firebase/instances";
+import { finalizaPedidoByIdCliente } from "@/lib/firebase/querys/setUSer";
 
 interface IPedidoCheckout {
-  setPedido: (e: NovoPedido) => void;
+  fechaModal: () => void;
   setProximo: (
     e: "carrinho" | "endereco" | "pagamento" | "flinalização"
   ) => void;
   pedido: NovoPedido | null;
 }
 
-
-export default function PedidoCheckout({ pedido, setProximo }: IPedidoCheckout) {
+export default function PedidoCheckout({
+  pedido,
+  setProximo,
+  fechaModal,
+}: IPedidoCheckout) {
+  const { user, carrinho, runQuery } = useApplication();
   const produtos = pedido?.produtos;
   const endereco = pedido?.endereco;
   const pagamento = pedido?.pagamento;
@@ -32,12 +39,19 @@ export default function PedidoCheckout({ pedido, setProximo }: IPedidoCheckout) 
     setProximo("pagamento");
   };
 
-  const finalizaEndereco = () => {
-    // setProximo("");
+  const finalizaPedido = () => {
+    if (pedido && carrinho) {
+      finalizaPedidoByIdCliente(db, carrinho, user?.id || "", pedido).then(
+        () => {
+          fechaModal();
+          runQuery();
+        }
+      );
+    }
   };
 
   return (
-    <div className="h-full overflow-auto">
+    <div className="h-full overflow-auto min-h-max">
       <div className="mb-4 font-semibold">Itens:</div>
       {produtos?.map((item) => (
         <>
@@ -90,7 +104,9 @@ export default function PedidoCheckout({ pedido, setProximo }: IPedidoCheckout) 
             <div>
               {pagamento == "Pix" && <FaPix />}
               {pagamento == "Dinheiro" && <CiMoneyBill />}
-              {(pagamento == "Credito" || pagamento == "Debito") && <LuCreditCard />}
+              {(pagamento == "Credito" || pagamento == "Debito") && (
+                <LuCreditCard />
+              )}
             </div>
           </div>
           <Separator />
@@ -107,8 +123,8 @@ export default function PedidoCheckout({ pedido, setProximo }: IPedidoCheckout) 
           voltar
         </Button>
 
-        <Button className="" onClick={() => finalizaEndereco()}>
-          Selecionar Pagamento
+        <Button className="" onClick={() => finalizaPedido()}>
+          Finalizar Pedido
         </Button>
       </div>
     </div>

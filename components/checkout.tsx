@@ -32,6 +32,11 @@ export default function Checkout({
     "carrinho" | "endereco" | "pagamento" | "flinalização"
   >("carrinho");
 
+  const fechaModal = () => {
+    setInicioPedido(true);
+    setPedido(null)
+    setOpen(false);
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -95,7 +100,7 @@ export default function Checkout({
             {estadoTab === "flinalização" && (
               <PedidoCheckout
                 pedido={pedido}
-                setPedido={setPedido}
+                fechaModal={fechaModal}
                 setProximo={setEstadoTab}
               />
             )}

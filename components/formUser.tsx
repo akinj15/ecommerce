@@ -20,14 +20,13 @@ import { Button } from "./ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
-  DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useApplication } from "./applicationProvider";
 import { useToast } from "@/hooks/use-toast";
+import { FormEndereco } from "./formEndereco";
+import { LuMoreVertical, LuUser } from "react-icons/lu";
 
 const formSchema = z.object({
   nome: z.string(),
@@ -41,7 +40,7 @@ export function ProfileForm({
   children: React.ReactNode;
 }>) {
   const [open, setOpen] = useState(false);
-  const { user, runQuery } = useApplication();
+  const { user, endereco, runQuery } = useApplication();
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -61,7 +60,7 @@ export function ProfileForm({
   const wCPF = form.watch("cpf");
   const wTelefone = form.watch("telefone");
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmitCliente(values: z.infer<typeof formSchema>) {
     try {
       setClienteById(db, user?.id || "", values, setOpen);
       toast({
@@ -69,9 +68,9 @@ export function ProfileForm({
       });
       runQuery();
     } catch (e) {
-      console.log(e)
+      console.log(e);
       toast({
-        title: "Falha ao salvar"
+        title: "Falha ao salvar",
       });
     }
   }
@@ -88,16 +87,13 @@ export function ProfileForm({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Usuário</DialogTitle>
-          <DialogDescription>
-            Atualize seus dados.
-          </DialogDescription>
-        </DialogHeader>
+        <div className="flex justify-center mt-2">
+          <LuUser className="h-16 w-16" />
+        </div>
         <Form {...form}>
           <form
             id="formUser"
-            onSubmit={form.handleSubmit(onSubmit)}
+            onSubmit={form.handleSubmit(onSubmitCliente)}
             className="space-y-8"
           >
             <div className="">
@@ -149,6 +145,32 @@ export function ProfileForm({
             </div>
           </form>
         </Form>
+        {endereco?.length ? (
+          <>
+            <FormEndereco dados={endereco[0]}>
+              <div className="flex items-center justify-between my-4">
+                <div className="">
+                  <h3 className="font-semibold">
+                    {endereco[0].rua + " - " + endereco[0].numero}
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    {`${endereco[0].bairro} - ${endereco[0].cidade}`}
+                  </p>
+                </div>
+                <div>
+                  <LuMoreVertical />
+                </div>
+              </div>
+            </FormEndereco>
+          </>
+        ) : (
+          <>
+            <FormEndereco>
+              <Button className="w-full">Cadastre um novo endereço</Button>
+            </FormEndereco>
+          </>
+        )}
+
         <DialogFooter>
           <Button form="formUser" type="submit">
             salvar

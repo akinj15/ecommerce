@@ -6,7 +6,11 @@ import { useApplication } from "./applicationProvider";
 import { useEffect, useState } from "react";
 import { db } from "@/lib/firebase/instances";
 import { ItemCarrinho } from "@/types/usuario";
-import { deleteItemCarrinhoByIdCliente, updateItemCarrinhoByIdCliente } from "@/lib/firebase/querys/setUSer";
+import {
+  deleteItemCarrinhoByIdCliente,
+  updateItemCarrinhoByIdCliente,
+} from "@/lib/firebase/querys/setUSer";
+import { LuShoppingCart } from "react-icons/lu";
 
 import Image from "next/image";
 import semImagem from "../public/imagens/semImagem.png";
@@ -15,10 +19,10 @@ import { NovoPedido } from "@/types/pedido";
 // Define the structure of a cart item
 interface CartItem {
   imgUrl: string;
-  chave: number
-  nome: string
-  preco: number
-  quantidade: number
+  chave: number;
+  nome: string;
+  preco: number;
+  quantidade: number;
 }
 
 // CartItem component to display individual items
@@ -45,7 +49,9 @@ const CartItem = ({
     </div>
     <div className="flex-1">
       <h3 className="font-semibold">{item.nome}</h3>
-      <p className="text-sm text-gray-500">${(item.preco * item.quantidade).toFixed(2)}</p>
+      <p className="text-sm text-gray-500">
+        ${(item.preco * item.quantidade).toFixed(2)}
+      </p>
     </div>
     <div className="flex items-center space-x-2">
       <Button
@@ -130,7 +136,14 @@ export default function CarrinhoCheckout({
   return (
     <div className="flex flex-col h-full content-between">
       {carrinho?.length === 0 ? (
-        <p className="text-center text-gray-500">Seu Carrinho está vazio</p>
+        <>
+          <div className="flex justify-center mt-28">
+            <LuShoppingCart className="h-32 w-32" />
+          </div>
+          <p className="text-center text-gray-500 text-xl mt-8">
+            Seu Carrinho está vazio
+          </p>
+        </>
       ) : (
         <>
           <div className="overflow-auto h-[500px]">
