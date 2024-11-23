@@ -11,6 +11,7 @@ import { CiMoneyBill } from "react-icons/ci";
 import { useApplication } from "./applicationProvider";
 import { db } from "@/lib/firebase/instances";
 import { finalizaPedidoByIdCliente } from "@/lib/firebase/querys/setUSer";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface IPedidoCheckout {
   fechaModal: () => void;
@@ -51,74 +52,84 @@ export default function PedidoCheckout({
   };
 
   return (
-    <div className="h-full overflow-auto min-h-max">
-      <div className="mb-4 font-semibold">Itens:</div>
-      {produtos?.map((item) => (
-        <>
-          <div key={item.id} className="flex justify-between items-center mb-4">
-            <div>
-              <h4 className="font-medium">{item.nome}</h4>
-              <p className="text-sm text-gray-500">
-                Quantidade: {item.quantidade}
-              </p>
-            </div>
-            <p className="font-medium">
-              ${(item.preco * item.quantidade).toFixed(2)}
-            </p>
-          </div>
-          <Separator />
-        </>
-      ))}
-      {endereco && (
-        <>
-          <div className="my-4 font-semibold">
-            <LuTruck className="mr-2 h-8 w-8" /> Endererço:
-          </div>
-          <div className="flex items-center justify-between">
-            <div className="">
-              <h3 className="font-semibold">
-                {endereco.rua + " - " + endereco.numero}
-              </h3>
-              <p className="text-sm text-gray-500">
-                {`${endereco.bairro} - ${endereco.cidade}`}
-              </p>
-            </div>
-            <div>
-              <LuMapPin />
-            </div>
-          </div>
-          <Separator />
-        </>
-      )}
+    <div className="h-full">
+      <ScrollArea className="min-h-max rounded-md">
+        <div className="overflow-auto ">
+          <div className="mb-4 font-semibold">Itens:</div>
+          {produtos?.map((item) => (
+            <>
+              <div
+                key={item.id}
+                className="flex justify-between items-center mb-4"
+              >
+                <div>
+                  <h4 className="font-medium">{item.nome}</h4>
+                  <p className="text-sm text-gray-500">
+                    Quantidade: {item.quantidade}
+                  </p>
+                </div>
+                <p className="font-medium">
+                  ${(item.preco * item.quantidade).toFixed(2)}
+                </p>
+              </div>
+              <Separator />
+            </>
+          ))}
+          {endereco && (
+            <>
+              <div className="my-4 font-semibold">
+                <LuTruck className="mr-2 h-8 w-8" /> Endererço:
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="">
+                  <h3 className="font-semibold">
+                    {endereco.rua + " - " + endereco.numero}
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    {`${endereco.bairro} - ${endereco.cidade}`}
+                  </p>
+                </div>
+                <div>
+                  <LuMapPin />
+                </div>
+              </div>
+              <Separator />
+            </>
+          )}
 
-      {pagamento && (
-        <>
-          <div className="my-4 font-semibold">
-            <LuCreditCard className="mr-2 h-8 w-8" /> Pagamento:
-          </div>
-          <div className="flex items-center justify-between">
-            <div className="">
-              <h3 className="font-semibold">{pagamento}</h3>
-              <p className="text-sm text-gray-500">${custoTotal.toFixed(2)}</p>
-            </div>
-            <div>
-              {pagamento == "Pix" && <FaPix />}
-              {pagamento == "Dinheiro" && <CiMoneyBill />}
-              {(pagamento == "Credito" || pagamento == "Debito") && (
-                <LuCreditCard />
-              )}
-            </div>
-          </div>
-          <Separator />
-        </>
-      )}
+          {pagamento && (
+            <>
+              <div className="my-4 font-semibold">
+                <LuCreditCard className="mr-2 h-8 w-8" /> Pagamento:
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="">
+                  <h3 className="font-semibold">{pagamento}</h3>
+                  <p className="text-sm text-gray-500">
+                    ${custoTotal.toFixed(2)}
+                  </p>
+                </div>
+                <div>
+                  {pagamento == "Pix" && <FaPix />}
+                  {pagamento == "Dinheiro" && <CiMoneyBill />}
+                  {(pagamento == "Credito" || pagamento == "Debito") && (
+                    <LuCreditCard />
+                  )}
+                </div>
+              </div>
+              <Separator />
+            </>
+          )}
 
-      <div className="flex justify-between items-center mt-8 font-semibold">
-        <span>Total:</span>
-        <span>${custoTotal.toFixed(2)}</span>
-      </div>
+          <div className="flex justify-between items-center mt-8 font-semibold">
+            <span>Total:</span>
+            <span>${custoTotal.toFixed(2)}</span>
+          </div>
+        </div>
+      </ScrollArea>
+
       <Separator />
-      <div className="flex justify-between mt-4">
+      <div className="flex justify-between mt-auto">
         <Button className="" variant="ghost" onClick={() => voltar()}>
           voltar
         </Button>

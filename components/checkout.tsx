@@ -38,10 +38,18 @@ export default function Checkout({
     setOpen(false);
   }
 
+  const openChange = (e: boolean) => {
+    if (!e) {
+      setPedido(null);
+      setInicioPedido(true);
+    }
+    setOpen(e);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={openChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="sm:max-w-[650px] h-svh sm:h-[80%] flex flex-col">
+      <DialogContent className="sm:max-w-[650px] h-svh sm:h-[80%] flex flex-col gap-0">
         <DialogHeader>
           <DialogTitle>Finelize seu Pedido</DialogTitle>
         </DialogHeader>

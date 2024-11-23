@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 
 import Image from "next/image";
-import semImagem from "../public/imagens/semImagem.png";
+import semImagem from "../public/imagens/sem_foto.png";
 import { LuShoppingCart, LuPlus, LuMinus } from "react-icons/lu";
 import { Produto } from "@/types/produtos";
 import { setItemCarrinhoByIdCliente } from "@/lib/firebase/querys/setUSer";
@@ -52,7 +52,7 @@ export default function ProdutoModal({
           <DialogTitle>{produto.codigo}</DialogTitle>
           <DialogDescription>Product Details</DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 py-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2">
           <div className="space-y-4">
             <Image
               src={produto.imgUrl.replace("http://", "https://") || semImagem}
@@ -63,7 +63,7 @@ export default function ProdutoModal({
             />
             <p className="text-xl font-bold">${produto.preco.toFixed(2)}</p>
           </div>
-          <div className="space-y-4 h-full flex flex-col content-between">
+          <div className=" h-full flex flex-col content-between">
             <div className="w-full">
               <p className="text-sm text-muted-foreground">{produto.nome}</p>
               {/* <div className="space-y-2">

@@ -15,6 +15,7 @@ import { LuShoppingCart } from "react-icons/lu";
 import Image from "next/image";
 import semImagem from "../public/imagens/semImagem.png";
 import { NovoPedido } from "@/types/pedido";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 // Define the structure of a cart item
 interface CartItem {
@@ -146,7 +147,7 @@ export default function CarrinhoCheckout({
         </>
       ) : (
         <>
-          <div className="overflow-auto h-[500px]">
+          <ScrollArea className="h-[500px]">
             {carrinho?.map((item) => (
               <CartItem
                 key={item.id}
@@ -156,7 +157,7 @@ export default function CarrinhoCheckout({
                 onRemove={() => removeItem(item.id)}
               />
             ))}
-          </div>
+          </ScrollArea>
           <div className="mt-auto">
             <div className="flex justify-between items-center pt-4 font-semibold">
               <span>Total:</span>

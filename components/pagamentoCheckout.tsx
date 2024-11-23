@@ -49,19 +49,20 @@ export default function PagamentoCheckout({
       <div className="">
         {formasPagamentos.map((e) => {
           return (
-            <>
+            <div key={e}>
               <Card
                 className={
-                  pagamentoSelecionado == e ? "my-4 shadow-xl" : "my-4"
+                  pagamentoSelecionado == e
+                    ? "my-4 shadow-primary transition ease-in-out delay-150"
+                    : "my-4 transition ease-in-out delay-150"
                 }
-                key={e}
                 onClick={() => selecionaPagamento(e)}
               >
                 <CardHeader>
                   <CardTitle>{e}</CardTitle>
                 </CardHeader>
               </Card>
-            </>
+            </div>
           );
         })}
       </div>

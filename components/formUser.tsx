@@ -86,10 +86,10 @@ export function ProfileForm({
   }, [form, wTelefone]);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen} >
       <DialogTrigger asChild>{children}</DialogTrigger>
 
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={e => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>
             {" "}

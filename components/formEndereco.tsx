@@ -134,12 +134,12 @@ export function FormEndereco({
   return (
     <Dialog open={openFormEndereco} onOpenChange={setOpenFormEndereco}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={e => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>Endereço</DialogTitle>
           <DialogDescription>Digite o seu cep.</DialogDescription>
         </DialogHeader>
-        {novoEndereco ? ( 
+        {novoEndereco ? (
           <>
             <div className="flex flex-col space-y-1.5">
               <div className="flex justify-center">
@@ -148,7 +148,7 @@ export function FormEndereco({
                   value={cep}
                   onChange={(value) => setCep(value)}
                 >
-                  <InputOTPGroup>
+                  <InputOTPGroup autoFocus>
                     <InputOTPSlot index={0} />
                     <InputOTPSlot index={1} />
                     <InputOTPSlot index={2} />
@@ -282,7 +282,7 @@ export function FormEndereco({
           ) : (
             <>
               {" "}
-              <Button form="formEndereco" type="submit">
+              <Button form="formEndereco" type="submit" className="w-full">
                 salvar
               </Button>
             </>
