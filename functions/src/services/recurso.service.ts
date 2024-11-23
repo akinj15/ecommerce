@@ -192,14 +192,15 @@ export class RecursoService {
   async consultaClassesRecursos(): Promise<{
     classesRecursos: classeRecurso[];
   }> {
-    const apiResponse = await axios.get(this.apiUrl + "classeRecurso", {
+    const apiResponse = await axios.get(this.apiUrl + "classes", {
       headers: {
         Authorization: constantes.token,
       },
     });
 
     const responseData = apiResponse.data;
-
+    console.log("responseData");
+    console.log(responseData);
     if (!responseData.classesRecursos) {
       throw new Error("Classes não encontradas na resposta da API.");
     }

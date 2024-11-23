@@ -61,8 +61,8 @@ export function ListaProdutos() {
         </div>
       </div>
       <div>
-        <div className="container mx-auto">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <div className="">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:lg:grid-cols-6 gap-4">
             {produtos?.map((product) => (
               <ProdutoModal key={product.chave} produto={product}>
                 <Card key={product.chave}>
@@ -75,12 +75,12 @@ export function ListaProdutos() {
                       alt={product.nome}
                       width={200}
                       height={200}
-                      className="w-full h-40 object-cover mb-2"
+                      className="w-full h-50 object-cover mb-2"
                     />
-                    <h3 className="text-sm font-semibold">{product.nome}</h3>
-                    <p className="font-bold">
-                      ${product.preco.toFixed(2)}
-                    </p>
+                    <h3 className="text-sm font-semibold text-ellipsis overflow-hidden whitespace-nowrap">
+                      {product.codigo}
+                    </h3>
+                    <p className="font-bold">${product.preco.toFixed(2)}</p>
                   </CardContent>
                 </Card>
               </ProdutoModal>

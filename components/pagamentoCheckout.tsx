@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, } from "./ui/card";
 import { useState } from "react";
 import { NovoPedido } from "@/types/pedido";
+import { LuCreditCard } from "react-icons/lu";
 
 
 const formasPagamentos = ["Pix", "Dinheiro", "Credito", "Debito"];
@@ -45,39 +46,46 @@ export default function PagamentoCheckout({
 
 
   return (
-    <div className="mt-4 h-full grid content-between ">
-      <div className="">
-        {formasPagamentos.map((e) => {
-          return (
-            <div key={e}>
-              <Card
-                className={
-                  pagamentoSelecionado == e
-                    ? "my-4 shadow-primary transition ease-in-out delay-150"
-                    : "my-4 transition ease-in-out delay-150"
-                }
-                onClick={() => selecionaPagamento(e)}
-              >
-                <CardHeader>
-                  <CardTitle>{e}</CardTitle>
-                </CardHeader>
-              </Card>
-            </div>
-          );
-        })}
-      </div>
+    <>
 
-      <div className="mt-auto">
-        <div className="flex justify-between">
-          <Button className="" variant="ghost" onClick={() => voltar()}>
-            voltar
-          </Button>
+      <div className="h-full flex flex-col">
+        <div className="shrink-0 flex items-center gap-4">
+          <LuCreditCard className="mr-2 h-12 w-12" />{" "}
+          <div className="text-center font-semibold">Pagamento</div>
+        </div>
+        <div className="h-full my-4">
+          {formasPagamentos.map((e) => {
+            return (
+              <div key={e}>
+                <Card
+                  className={
+                    pagamentoSelecionado == e
+                      ? "my-4 shadow-primary transition ease-in-out delay-150"
+                      : "my-4 transition ease-in-out delay-150"
+                  }
+                  onClick={() => selecionaPagamento(e)}
+                >
+                  <CardHeader>
+                    <CardTitle>{e}</CardTitle>
+                  </CardHeader>
+                </Card>
+              </div>
+            );
+          })}
+        </div>
 
-          <Button className="" onClick={() => finalizaEndereco()}>
-            Selecionar Pagamento
-          </Button>
+        <div className="shrink-0">
+          <div className="flex justify-between">
+            <Button className="" variant="ghost" onClick={() => voltar()}>
+              voltar
+            </Button>
+
+            <Button className="" onClick={() => finalizaEndereco()}>
+              Selecionar Pagamento
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

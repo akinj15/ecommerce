@@ -16,7 +16,6 @@ import EnderecoCheckout from "@/components/enderecoCheckout";
 import PagamentoCheckout from "@/components/pagamentoCheckout";
 import { NovoPedido } from "@/types/pedido";
 import PedidoCheckout from "./pedidoCheckout";
-import { LuCreditCard, LuPackage, LuTruck } from "react-icons/lu";
 
 export default function Checkout({
   children,
@@ -51,7 +50,7 @@ export default function Checkout({
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[650px] h-svh sm:h-[80%] flex flex-col gap-0">
         <DialogHeader>
-          <DialogTitle>Finelize seu Pedido</DialogTitle>
+          <DialogTitle></DialogTitle>
         </DialogHeader>
 
         {inicioPedido && (
@@ -64,30 +63,6 @@ export default function Checkout({
         )}
         {!inicioPedido && (
           <>
-            <div className="flex justify-between">
-              {estadoTab === "endereco" && (
-                <>
-                  <div>
-                    <LuTruck className="mr-2 h-8 w-8" /> Endererço
-                  </div>
-                </>
-              )}
-              {estadoTab === "pagamento" && (
-                <>
-                  <div>
-                    <LuCreditCard className="mr-2 h-8 w-8" /> Pagamento
-                  </div>
-                </>
-              )}
-              {estadoTab === "flinalização" && (
-                <>
-                  <div>
-                    <LuPackage className="mr-2 h-8 w-8" /> Finalizar
-                  </div>
-                </>
-              )}
-            </div>
-
             {estadoTab === "endereco" && (
               <EnderecoCheckout
                 pedido={pedido}

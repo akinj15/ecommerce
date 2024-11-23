@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 // import { db } from "@/lib/firebase/instances";
 import { NovoPedido } from "@/types/pedido";
 import { Separator } from "@/components/ui/separator";
-import { LuCreditCard, LuMapPin, LuTruck } from "react-icons/lu";
+import { LuCreditCard, LuMapPin, LuPackage, LuTruck } from "react-icons/lu";
 import { FaPix } from "react-icons/fa6";
 import { CiMoneyBill } from "react-icons/ci";
 import { useApplication } from "./applicationProvider";
@@ -52,8 +52,11 @@ export default function PedidoCheckout({
   };
 
   return (
-    <div className="h-full">
-      <ScrollArea className="min-h-max rounded-md">
+    <div className="h-full flex flex-col">
+      <div className="shrink-0 ">
+        <LuPackage className="mr-2 h-8 w-8" /> Finalizar
+      </div>
+      <ScrollArea className="my-4 px-4">
         <div className="overflow-auto ">
           <div className="mb-4 font-semibold">Itens:</div>
           {produtos?.map((item) => (
@@ -128,8 +131,9 @@ export default function PedidoCheckout({
         </div>
       </ScrollArea>
 
-      <Separator />
-      <div className="flex justify-between mt-auto">
+      {/* <Separator /> */}
+
+      <div className="shrink-0 flex justify-between mt-4">
         <Button className="" variant="ghost" onClick={() => voltar()}>
           voltar
         </Button>

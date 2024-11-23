@@ -50,7 +50,7 @@ export default function ProdutoModal({
       <DialogContent className="sm:max-w-[625px]">
         <DialogHeader>
           <DialogTitle>{produto.codigo}</DialogTitle>
-          <DialogDescription>Product Details</DialogDescription>
+          <DialogDescription></DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 md:grid-cols-2">
           <div className="space-y-4">
@@ -59,7 +59,7 @@ export default function ProdutoModal({
               alt={produto.nome}
               width={200}
               height={200}
-              className="w-full h-auto object-cover rounded-lg"
+              className="w-full h-auto rounded-lg"
             />
             <p className="text-xl font-bold">${produto.preco.toFixed(2)}</p>
           </div>

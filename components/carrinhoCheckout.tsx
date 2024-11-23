@@ -135,7 +135,7 @@ export default function CarrinhoCheckout({
   };
 
   return (
-    <div className="flex flex-col h-full content-between">
+    <div className="flex flex-col h-full">
       {carrinho?.length === 0 ? (
         <>
           <div className="flex justify-center mt-28">
@@ -147,7 +147,10 @@ export default function CarrinhoCheckout({
         </>
       ) : (
         <>
-          <ScrollArea className="h-[500px]">
+          <div className="shrink-0 flex items-center gap-4">
+            <LuShoppingCart className="mr-2 h-12 w-12" /> <div className="text-center font-semibold">Carrinho</div>
+          </div>
+          <ScrollArea className="px-2 my-4">
             {carrinho?.map((item) => (
               <CartItem
                 key={item.id}
@@ -158,7 +161,7 @@ export default function CarrinhoCheckout({
               />
             ))}
           </ScrollArea>
-          <div className="mt-auto">
+          <div className="shrink-0 mt-4">
             <div className="flex justify-between items-center pt-4 font-semibold">
               <span>Total:</span>
               <span>${custoTotal.toFixed(2)}</span>
