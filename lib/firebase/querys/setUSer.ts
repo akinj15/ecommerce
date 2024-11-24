@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Endereco } from "@/types/endereco";
-import { NovoPedido } from "@/types/pedido";
+import { Pedido } from "@/types/pedido";
 import { ItemCarrinho } from "@/types/usuario";
 import { addDoc, collection, deleteDoc, doc, Firestore, setDoc, updateDoc, writeBatch } from "firebase/firestore";
 
@@ -80,7 +80,7 @@ export async function finalizaPedidoByIdCliente(
   db: Firestore,
   item: ItemCarrinho[],
   userId: string,
-  dt: NovoPedido
+  dt: Pedido
 ) {
   const batch = writeBatch(db);
 

@@ -44,9 +44,9 @@ export default function PedidoCheckout({
       <ScrollArea key={"mopa23232"} className="my-4 px-4 h-full">
         <div className="mb-4 font-semibold">Itens:</div>
         {produtos?.map((item) => (
-          <>
+          <div key={item.id + "Final"}>
             <div
-              key={item.id + "Final"}
+              
               className="flex justify-between items-center mb-4"
             >
               <div>
@@ -60,10 +60,10 @@ export default function PedidoCheckout({
               </p>
             </div>
             <Separator />
-          </>
+          </div>
         ))}
         {endereco && (
-          <>
+          <div>
             <div className="my-4 font-semibold">
               <LuTruck className="mr-2 h-8 w-8" /> Endererço:
             </div>
@@ -81,11 +81,11 @@ export default function PedidoCheckout({
               </div>
             </div>
             <Separator />
-          </>
+          </div>
         )}
 
         {pagamento && (
-          <>
+          <div>
             <div className="my-4 font-semibold">
               <LuCreditCard className="mr-2 h-8 w-8" /> Pagamento:
             </div>
@@ -105,7 +105,7 @@ export default function PedidoCheckout({
               </div>
             </div>
             <Separator />
-          </>
+          </div>
         )}
 
         <div className="flex justify-between items-center mt-8 font-semibold">

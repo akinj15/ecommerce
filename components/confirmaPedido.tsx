@@ -14,7 +14,7 @@ import {
 import { useApplication } from "./applicationProvider";
 import { useToast } from "@/hooks/use-toast";
 
-import { NovoPedido } from "@/types/pedido";
+import { NovoPedido, Pedido } from "@/types/pedido";
 import { finalizaPedidoByIdCliente } from "@/lib/firebase/querys/setUSer";
 import { LuCreditCard, LuMapPin, LuTruck } from "react-icons/lu";
 import { Separator } from "./ui/separator";
@@ -43,20 +43,27 @@ export function ConfirmaPedido({
 
   const finalizaPedido = () => {
     if (dados && carrinho) {
-      finalizaPedidoByIdCliente(db, carrinho, user?.id || "", dados).then(
-        () => {
+      const dadosEnvio: Pedido = {
+        emissao: new Date(),
+        status: {codigo: "novo", nome: "Pedido"},
+        endereco: dados.endereco,
+        pagamento: dados.pagamento,
+        produtos: dados.produtos
+      };
+      finalizaPedidoByIdCliente(db, carrinho, user?.id || "", dadosEnvio)
+        .then(() => {
           fechaModal();
           runQuery();
           toast({
             title: "Sucesso",
           });
-        }
-      ).catch(() => {
-        toast({
-          title: "Falha na criação do pedido",
-          variant: "destructive"
+        })
+        .catch(() => {
+          toast({
+            title: "Falha na criação do pedido",
+            variant: "destructive",
+          });
         });
-      });
     }
   };
 

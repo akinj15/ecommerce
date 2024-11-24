@@ -64,7 +64,10 @@ export function ListaProdutos() {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:lg:grid-cols-6 gap-4">
             {produtos?.map((product) => (
               <ProdutoModal key={product.chave} produto={product}>
-                <Card key={product.chave}>
+                <Card
+                  key={product.chave}
+                  className="cursor-pointer hover:shadow-xl transition ease-in-out delay-150"
+                >
                   <CardContent className="p-4">
                     <Image
                       src={
