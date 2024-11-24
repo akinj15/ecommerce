@@ -12,7 +12,7 @@ export const HeaderBar = () => {
   const { carrinho } = useApplication();
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:border-border">
-      <div className="container flex h-14 max-w-screen-2xl items-center">
+      <div className=" flex h-14  items-center">
         <div className="mx-2">
           <div className="flex items-center space-x-4">
             <Link href={"/"}>
