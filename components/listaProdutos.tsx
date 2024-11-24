@@ -17,7 +17,6 @@ import { Card, CardContent } from "./ui/card";
 import Image from "next/image";
 import semImagem from "../public/imagens/sem_foto.png";
 import { Label } from "./ui/label";
-import { Input } from "./ui/input";
 import ProdutoModal from "./formAdicionarProduto";
 
 export function ListaProdutos() {
@@ -38,15 +37,15 @@ export function ListaProdutos() {
   return (
     <div className="">
       <div className="mb-6">
-        <div className="">
+        {/* <div className="">
           <Label htmlFor="picture">Pesquisa</Label>
           <Input />
-        </div>
+        </div> */}
         <div>
           <Label>Categoria</Label>
           <Select onValueChange={(e) => setClasse(e)}>
             <SelectTrigger className="">
-              <SelectValue placeholder="" />
+              <SelectValue placeholder="Todos" />
             </SelectTrigger>
             <SelectContent>
               {classes?.map((classe) => {

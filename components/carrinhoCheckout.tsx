@@ -38,23 +38,25 @@ const CartItem = ({
   onDecrease: () => void;
   onRemove: () => void;
 }) => (
-  <div className="flex items-center justify-between py-2 border-b p-1">
-    <div className="space-y-4">
-      <Image
-        src={item.imgUrl.replace("http://", "https://") || semImagem}
-        alt={item.nome}
-        width={200}
-        height={200}
-        className="w-[40px] h-auto object-cover rounded-lg mr-2"
-      />
+  <div className="flex sm:flex-row flex-col sm:items-center sm:justify-between py-2 border-b p-1">
+    <div className="flex items-center">
+      <div className="space-y-4">
+        <Image
+          src={item.imgUrl.replace("http://", "https://") || semImagem}
+          alt={item.nome}
+          width={200}
+          height={200}
+          className="w-[40px] h-auto object-cover rounded-lg mr-2"
+        />
+      </div>
+      <div className="flex-1">
+        <h3 className="font-semibold text-sm">{item.nome}</h3>
+        <p className="text-sm text-gray-500">
+          ${(item.preco * item.quantidade).toFixed(2)}
+        </p>
+      </div>
     </div>
-    <div className="flex-1">
-      <h3 className="font-semibold">{item.nome}</h3>
-      <p className="text-sm text-gray-500">
-        ${(item.preco * item.quantidade).toFixed(2)}
-      </p>
-    </div>
-    <div className="flex items-center space-x-2">
+    <div className="flex items-center justify-end space-x-2">
       <Button
         variant="outline"
         size="icon"
@@ -150,7 +152,7 @@ export default function CarrinhoCheckout({
           <div className="shrink-0 flex items-center gap-4">
             <LuShoppingCart className="mr-2 h-12 w-12" /> <div className="text-center font-semibold">Carrinho</div>
           </div>
-          <ScrollArea className="px-2 my-4">
+          <ScrollArea className="px-2 h-full my-4">
             {carrinho?.map((item) => (
               <CartItem
                 key={item.id}
