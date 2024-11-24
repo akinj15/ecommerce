@@ -27,6 +27,7 @@ import { LuPhone } from "react-icons/lu";
 import { useToast } from "@/hooks/use-toast";
 import { formatNumber } from "@/lib/format";
 import { createClienteById } from "@/lib/firebase/querys/setUSer";
+import { getClientes } from "@/lib/firebase/querys/getUser";
 
 export const OPTLogin = () => {
   const { toast } = useToast();
@@ -86,7 +87,11 @@ export const OPTLogin = () => {
 
       try {
         const res = await confirmationResult?.confirm(opt || "");
-        createClienteById(db, res.user.uid, { telefone: telefone });
+        getClientes(db, { id: res.user.uid }).then((e) => {
+          if (!e) {
+            createClienteById(db, res.user.uid, { telefone: telefone });
+          }
+        });
         toast({
           title: "Codigo Verificado com sucesso."
         });
@@ -174,7 +179,7 @@ export const OPTLogin = () => {
                 <div className="grid w-full items-center gap-4">
                   <div className="flex flex-col space-y-1.5">
                     <Label htmlFor="phone">Inform o codigo de verificação</Label>
-                    <div className="">
+                    <div className="flex justify-center">
                       <InputOTP
                         maxLength={6}
                         value={opt}
@@ -217,11 +222,10 @@ export const OPTLogin = () => {
               disabled={!telefone || isPending || resendCountdown > 0}
             >
               {resendCountdown > 0
-                ? `Renviar Codigo em ${resendCountdown}`
+                ? `Renviar Codigo em ${resendCountdown} `
                 : isPending
-                ? "Enviando Codigo"
-                : "Enviar Codigo"}
-              Send OTP
+                ? "Enviando Codigo "
+                : "Enviar Codigo "}
             </Button>
           </CardFooter>
         </Card>
