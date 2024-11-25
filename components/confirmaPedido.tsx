@@ -20,6 +20,7 @@ import { LuCreditCard, LuMapPin, LuTruck } from "react-icons/lu";
 import { Separator } from "./ui/separator";
 import { FaPix } from "react-icons/fa6";
 import { CiMoneyBill } from "react-icons/ci";
+import { cn } from "@/lib/utils";
 
 export function ConfirmaPedido({
   children,
@@ -56,6 +57,9 @@ export function ConfirmaPedido({
           runQuery();
           toast({
             title: "Sucesso",
+            className: cn(
+              "botton-0 left-0"
+            ),
           });
         })
         .catch(() => {

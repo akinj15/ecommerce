@@ -87,11 +87,7 @@ export const OPTLogin = () => {
 
       try {
         const res = await confirmationResult?.confirm(opt || "");
-        getClientes(db, { id: res.user.uid }).then((e) => {
-          if (!e) {
-            createClienteById(db, res.user.uid, { telefone: telefone });
-          }
-        });
+        createClienteById(db, res.user.uid, { telefone: telefone });
         toast({
           title: "Codigo Verificado com sucesso."
         });

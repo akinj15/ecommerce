@@ -2,7 +2,16 @@
 import { Endereco } from "@/types/endereco";
 import { Pedido } from "@/types/pedido";
 import { ItemCarrinho } from "@/types/usuario";
-import { addDoc, collection, deleteDoc, doc, Firestore, setDoc, updateDoc, writeBatch } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  Firestore,
+  setDoc,
+  updateDoc,
+  writeBatch,
+} from "firebase/firestore";
 
 export async function setClienteById(
   db: Firestore,
@@ -11,7 +20,7 @@ export async function setClienteById(
   cb: (e: boolean) => void
 ) {
   try {
-    await setDoc(doc(db, "cliente", id), dt);
+    await setDoc(doc(db, "cliente", id), dt, { merge: true });
   } finally {
     cb(false);
   }
@@ -20,15 +29,15 @@ export async function setClienteById(
 export async function createClienteById(
   db: Firestore,
   id: string,
-  dt: { telefone: string },
+  dt: { telefone: string }
 ) {
-  await setDoc(doc(db, "cliente", id), dt);
+  await setDoc(doc(db, "cliente", id), dt, { merge: true });
 }
 
 export async function setItemCarrinhoByIdCliente(
   db: Firestore,
   id: string,
-  dt: any,
+  dt: any
 ) {
   await addDoc(collection(db, "cliente", id, "carrinho"), dt);
 }
@@ -45,7 +54,7 @@ export async function updateItemCarrinhoByIdCliente(
 export async function deleteItemCarrinhoByIdCliente(
   db: Firestore,
   id: string,
-  carrinhoId: string,
+  carrinhoId: string
 ) {
   await deleteDoc(doc(db, "cliente", id, "carrinho", carrinhoId));
 }
@@ -55,7 +64,7 @@ export async function setEnderecoByIdCliente(
   id: string,
   dt: Endereco
 ) {
-  console.log("aaa" + id)
+  console.log("aaa" + id);
   await addDoc(collection(db, "cliente", id, "endereco"), dt);
 }
 
