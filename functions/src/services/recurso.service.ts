@@ -6,7 +6,6 @@ import { admin } from "../firebaseInicializer";
 
 export class RecursoService {
   apiUrl = constantes.apiUrl + constantes.rotaRecursos;
-  recursoSaldo = this.apiUrl + constantes.rotaRecursoSaldo;
   versao = 0;
   gravadosQtd = 0;
   db = admin.firestore();

@@ -8,10 +8,23 @@
  */
 
 // import * as logger from "firebase-functions/logger";
-import { https } from "firebase-functions/v2";
+import { https, logger } from "firebase-functions/v2";
+
+import {
+  Change,
+  FirestoreEvent,
+  onDocumentCreated,
+  onDocumentUpdated,
+  QueryDocumentSnapshot,
+} from "firebase-functions/v2/firestore";
+
 import { PagamentosService, RecursoService } from "./services";
 import { PrecoService } from "./services/preco.service";
 import { EstabelecimentosService } from "./services/estabelecimentos.service";
+import axios from "axios";
+import { Usuario, UsuarioResponse } from "./models";
+import { constantes } from "./config/constantes";
+import { admin } from "./firebaseInicializer";
 
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
@@ -105,7 +118,6 @@ export const getEstabelecimentos = https.onRequest(async (req, resp) => {
   }
 });
 
-
 export const getCondicoesDePagamento = https.onRequest(async (req, resp) => {
   try {
     const pagamentosService = new PagamentosService();
@@ -125,3 +137,125 @@ export const getCondicoesDePagamento = https.onRequest(async (req, resp) => {
       .send("Erro ao gravar os dados de pagamentos no Firestore.");
   }
 });
+
+
+export const noCriaCliente = onDocumentCreated(
+  "/cliente/{clienteId}",
+  async (
+    event: FirestoreEvent<
+      QueryDocumentSnapshot | undefined,
+      { clienteId: string }
+    >
+  ) => {
+    const usuario = (event.data?.data() as Usuario) || undefined;
+
+    const clienteId = event.params.clienteId;
+
+    if (!usuario) {
+      console.error(`Usuario ${clienteId} não encontrado.`);
+      return;
+    }
+
+    try {
+      const erpData = await axios.post<UsuarioResponse>(
+        constantes.apiUrl + constantes.rotaClientes,
+        {
+          fone: usuario.telefone,
+          nome: usuario.nome,
+          codigo: usuario.nome,
+          cgccpf: usuario.cpf,
+        },
+        {
+          headers: {
+            Authorization: constantes.token,
+          },
+        }
+      );
+
+      const dados = erpData.data;
+      if (dados.versao) {
+        const cliente = dados.clientes[0];
+
+        usuario.chave = cliente.chave; 
+      }
+    } finally {
+      await admin
+        .firestore()
+        .collection("/cliente")
+        .doc(clienteId)
+        .set(usuario, { merge: true });
+    }
+  }
+);
+
+export const noAtualizaCliente = onDocumentUpdated(
+  "/cliente/{clienteId}",
+  async (
+    event: FirestoreEvent<
+      Change<QueryDocumentSnapshot> | undefined,
+      Record<string, string>
+    >
+  ) => {
+    const usuario = event.data?.after.data();
+    console.log(usuario)
+    if (usuario) {
+      try {
+        const erpData = await axios.post<UsuarioResponse>(
+          constantes.apiUrl + constantes.rotaClientes,
+          {
+            chave: usuario.chave,
+            fone: usuario.telefone,
+            nome: usuario.nome,
+            codigo: usuario.nome,
+            cgccpf: usuario.cpf,
+          },
+          {
+            headers: {
+              Authorization: constantes.token,
+            },
+          }
+        );
+
+        const dados = erpData.data;
+
+        if (dados.versao) {
+          const cliente = dados.clientes[0];
+
+          usuario.chave = cliente.chave;
+        }
+      } catch (e) {
+        logger.error("Hello logs!", { structuredData: true }, e);
+      }
+    }
+  }
+);
+
+
+export const noCriaEnderecoCliente = onDocumentCreated(
+  "/cliente/{clienteId}/endereco/{enderecoId}",
+  async (
+    event: FirestoreEvent<
+      QueryDocumentSnapshot | undefined,
+      { clienteId: string }
+    >
+  ) => {
+    const usuario = (event.data?.data() as Usuario) || undefined;
+
+    console.log(usuario);
+    console.log(event.params);
+  }
+);
+
+export const noAtualizaEnderecoCliente = onDocumentUpdated(
+  "/cliente/{clienteId}/endereco/{enderecoId}",
+  async (
+    event: FirestoreEvent<
+      Change<QueryDocumentSnapshot> | undefined,
+      Record<string, string>
+    >
+  ) => {
+    const usuario = event.data?.after.data();
+    console.log(usuario);
+    console.log(event.params);
+  }
+);

@@ -46,10 +46,11 @@ export function ConfirmaPedido({
     if (dados && carrinho) {
       const dadosEnvio: Pedido = {
         emissao: new Date(),
-        status: {codigo: "novo", nome: "Pedido"},
+        status: { codigo: "novo", nome: "Pedido" },
         endereco: dados.endereco,
         pagamento: dados.pagamento,
-        produtos: dados.produtos
+        produtos: dados.produtos,
+        cliente: user,
       };
       finalizaPedidoByIdCliente(db, carrinho, user?.id || "", dadosEnvio)
         .then(() => {

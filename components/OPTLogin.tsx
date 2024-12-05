@@ -27,7 +27,6 @@ import { LuPhone } from "react-icons/lu";
 import { useToast } from "@/hooks/use-toast";
 import { formatNumber } from "@/lib/format";
 import { createClienteById } from "@/lib/firebase/querys/setUSer";
-import { getClientes } from "@/lib/firebase/querys/getUser";
 
 export const OPTLogin = () => {
   const { toast } = useToast();
@@ -86,10 +85,11 @@ export const OPTLogin = () => {
       }
 
       try {
-        const res = await confirmationResult?.confirm(opt || "");
-        createClienteById(db, res.user.uid, { telefone: telefone });
-        toast({
-          title: "Codigo Verificado com sucesso."
+        confirmationResult?.confirm(opt || "").then((e) => {
+          createClienteById(db, e.user.uid, { telefone: telefone });
+          toast({
+            title: "Codigo Verificado com sucesso.",
+          });
         });
       } catch (e) {
         console.log(e);

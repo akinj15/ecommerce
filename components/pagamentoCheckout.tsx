@@ -44,10 +44,8 @@ export default function PagamentoCheckout({
     setProximo("endereco");
   };
 
-
   return (
     <>
-
       <div className="h-full flex flex-col">
         <div className="shrink-0 flex items-center gap-4">
           <LuCreditCard className="mr-2 h-12 w-12" />{" "}

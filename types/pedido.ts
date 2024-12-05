@@ -1,5 +1,5 @@
 import { Endereco } from "./endereco";
-import { ItemCarrinho } from "./usuario";
+import { ItemCarrinho, Usuario } from "./usuario";
 
 export type NovoPedido = {
   endereco: Endereco | null;
@@ -23,5 +23,6 @@ export type Pedido = {
   endereco: Endereco | null;
   pagamento: string | null;
   produtos: ItemCarrinho[] | null;
+  cliente: Usuario | null;
 };
 

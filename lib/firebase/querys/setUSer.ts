@@ -64,7 +64,6 @@ export async function setEnderecoByIdCliente(
   id: string,
   dt: Endereco
 ) {
-  console.log("aaa" + id);
   await addDoc(collection(db, "cliente", id, "endereco"), dt);
 }
 

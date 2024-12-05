@@ -14,6 +14,7 @@ export type ItemCarrinho = {
 
 export type Usuario = {
   id?: string;
+  chave?: string;
   nome: string;
   telefone: string;
   cpf: string;

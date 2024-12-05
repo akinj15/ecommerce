@@ -18,6 +18,7 @@ export default function PhotoModal({
 }) {
   const param = use(params);
   const { user } = useApplication();
+
   const { data: pedido } = useQuery<Pedido>(() =>
     getPedidoById(db, {
       id: param?.id || "",
