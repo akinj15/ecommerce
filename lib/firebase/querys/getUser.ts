@@ -17,6 +17,7 @@ export async function getClientes(
     retorno = {
       id: docSnap.id,
       nome: dt.nome,
+      chave: dt.chave,
       cpf: dt.cpf,
       telefone: dt.telefone,
       carrinho: dt.carrinho,
@@ -80,6 +81,8 @@ export async function getEnderecoByClienteId(
       cidade: dt.cidade,
       complemento: dt.complemento,
       estado: dt.estado,
+      chave: dt.chave,
+      cliente: dt.cliente,
     });
   });
   return res;

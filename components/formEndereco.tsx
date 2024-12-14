@@ -36,6 +36,8 @@ import {
 import { Endereco } from "@/types/endereco";
 
 const formSchema = z.object({
+  chave: z.number(),
+  cliente: z.number(),
   rua: z.string(),
   cep: z.string(),
   bairro: z.string(),
@@ -71,6 +73,8 @@ export function FormEndereco({
       complemento: "",
     },
     values: {
+      chave: dados?.chave || 0,
+      cliente: dados?.cliente || 0,
       rua: dados?.rua || "",
       cep: dados?.cep || "",
       numero: dados?.numero || "",
@@ -84,8 +88,9 @@ export function FormEndereco({
 
   function onSubmitEndereco(values: z.infer<typeof formSchema>) {
     try {
+      const endereco = { ...values, cliente: user?.chave || 0 }; 
       if (dados?.id) {
-        updateEnderecoByIdCliente(db, user?.id || "", dados.id, values).then(() => {
+        updateEnderecoByIdCliente(db, user?.id || "", dados.id, endereco).then(() => {
           toast({
             title: "Sucesso",
           });
@@ -93,7 +98,7 @@ export function FormEndereco({
           setOpenFormEndereco(false);
         });
       } else {
-        setEnderecoByIdCliente(db, user?.id || "", values).then(() => {
+        setEnderecoByIdCliente(db, user?.id || "", endereco).then(() => {
           toast({
             title: "Sucesso",
           });

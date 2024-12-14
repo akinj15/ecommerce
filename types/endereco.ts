@@ -1,5 +1,7 @@
 export type Endereco = {
   id?: string;
+  chave?: number;
+  cliente: number;
   rua: string;
   cep: string;
   numero: string;

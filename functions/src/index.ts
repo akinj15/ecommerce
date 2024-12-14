@@ -22,7 +22,7 @@ import { PagamentosService, RecursoService } from "./services";
 import { PrecoService } from "./services/preco.service";
 import { EstabelecimentosService } from "./services/estabelecimentos.service";
 import axios from "axios";
-import { Usuario, UsuarioResponse } from "./models";
+import { Endereco, EnderecoResponse, Usuario, UsuarioResponse } from "./models";
 import { constantes } from "./config/constantes";
 import { admin } from "./firebaseInicializer";
 
@@ -161,8 +161,8 @@ export const noCriaCliente = onDocumentCreated(
         constantes.apiUrl + constantes.rotaClientes,
         {
           fone: usuario.telefone,
-          nome: usuario.nome,
-          codigo: usuario.nome,
+          nome: usuario.nome || usuario.telefone,
+          codigo: usuario.nome || usuario.telefone,
           cgccpf: usuario.cpf,
         },
         {
@@ -176,8 +176,10 @@ export const noCriaCliente = onDocumentCreated(
       if (dados.versao) {
         const cliente = dados.clientes[0];
 
-        usuario.chave = cliente.chave; 
+        usuario.chave = cliente.chave;
       }
+    } catch (e) {
+      logger.error("noCriaCliente", { structuredData: true }, e);
     } finally {
       await admin
         .firestore()
@@ -205,8 +207,8 @@ export const noAtualizaCliente = onDocumentUpdated(
           {
             chave: usuario.chave,
             fone: usuario.telefone,
-            nome: usuario.nome,
-            codigo: usuario.nome,
+            nome: usuario.nome || usuario.telefone,
+            codigo: usuario.nome || usuario.telefone,
             cgccpf: usuario.cpf,
           },
           {
@@ -224,25 +226,61 @@ export const noAtualizaCliente = onDocumentUpdated(
           usuario.chave = cliente.chave;
         }
       } catch (e) {
-        logger.error("Hello logs!", { structuredData: true }, e);
+        logger.error("onDocumentUpdated ", { structuredData: true }, e);
       }
     }
   }
 );
-
 
 export const noCriaEnderecoCliente = onDocumentCreated(
   "/cliente/{clienteId}/endereco/{enderecoId}",
   async (
     event: FirestoreEvent<
       QueryDocumentSnapshot | undefined,
-      { clienteId: string }
+      { clienteId: string; enderecoId: string }
     >
   ) => {
-    const usuario = (event.data?.data() as Usuario) || undefined;
 
-    console.log(usuario);
-    console.log(event.params);
+    const clienteId = event.params.clienteId;
+    const enderecoId = event.params.enderecoId;
+
+    const endereco = (event.data?.data() as Endereco) || undefined;
+
+    try {
+      const res = await axios.post<EnderecoResponse>(
+        constantes.apiUrl + constantes.rotaCadastraEndereco,
+        {
+          chave: endereco.chave,
+          cliente: endereco.cliente,
+          rua: endereco.rua,
+          cep: endereco.cep,
+          complemento: endereco.complemento,
+          numero: endereco.numero,
+          uf: endereco.uf,
+          cidade: endereco.cidade,
+          estado: endereco.estado,
+        },
+        {
+          headers: {
+            Authorization: constantes.token,
+          },
+        }
+      );
+      const data = res.data;
+      if (data.endereco && data.endereco.length && data.endereco[0].chave) {
+        endereco.chave = data.endereco[0].chave;
+      }
+    } catch (e) {
+      logger.error("noCriaCliente", { structuredData: true }, e);
+    } finally {
+      await admin
+        .firestore()
+        .collection("/cliente")
+        .doc(clienteId)
+        .collection("/endereco")
+        .doc(enderecoId)
+        .set(endereco, { merge: true });
+    }
   }
 );
 
@@ -251,11 +289,48 @@ export const noAtualizaEnderecoCliente = onDocumentUpdated(
   async (
     event: FirestoreEvent<
       Change<QueryDocumentSnapshot> | undefined,
-      Record<string, string>
+      { clienteId: string; enderecoId: string }
     >
   ) => {
-    const usuario = event.data?.after.data();
-    console.log(usuario);
-    console.log(event.params);
+    const clienteId = event.params.clienteId;
+    const enderecoId = event.params.enderecoId;
+
+    const endereco = ( event.data?.after.data() as Endereco) || undefined;
+
+    try {
+      const res = await axios.post<EnderecoResponse>(
+        constantes.apiUrl + constantes.rotaCadastraEndereco,
+        {
+          chave: endereco.chave,
+          cliente: endereco.cliente,
+          rua: endereco.rua,
+          cep: endereco.cep,
+          complemento: endereco.complemento,
+          numero: endereco.numero,
+          uf: endereco.uf,
+          cidade: endereco.cidade,
+          estado: endereco.estado,
+        },
+        {
+          headers: {
+            Authorization: constantes.token,
+          },
+        }
+      );
+      const data = res.data;
+      if (data.endereco && data.endereco.length && data.endereco[0].chave) {
+        endereco.chave = data.endereco[0].chave;
+      }
+    } catch (e) {
+      logger.error("noCriaCliente", { structuredData: true }, e);
+    } finally {
+      await admin
+        .firestore()
+        .collection("/cliente")
+        .doc(clienteId)
+        .collection("/endereco")
+        .doc(enderecoId)
+        .set(endereco, { merge: true });
+    }
   }
 );

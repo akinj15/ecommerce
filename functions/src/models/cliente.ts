@@ -8,6 +8,8 @@ export type Usuario = {
 
 export type Endereco = {
   id?: string;
+  chave?: number;
+  cliente: number;
   rua: string;
   cep: string;
   numero: string;
@@ -21,5 +23,11 @@ export type Endereco = {
 export type UsuarioResponse = {
   erros: [];
   clientes: { chave: string }[];
+  versao: number;
+};
+
+export type EnderecoResponse = {
+  erros: [];
+  endereco: { chave: number }[];
   versao: number;
 };
