@@ -97,6 +97,7 @@ export async function finalizaPedidoByIdCliente(
     const laRef = doc(db, "cliente", userId, "carrinho", e.id);
     batch.delete(laRef);
   }
+  console.log(dt);
 
   await addDoc(collection(db, "cliente", userId, "pedido"), dt);
 

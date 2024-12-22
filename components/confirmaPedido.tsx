@@ -50,7 +50,12 @@ export function ConfirmaPedido({
         endereco: dados.endereco,
         pagamento: dados.pagamento,
         produtos: dados.produtos,
-        cliente: user,
+        cliente: {
+          chave: user?.chave || 0,
+          cpf: user?.cpf,
+          nome: user?.nome,
+          id: user?.id || "",
+        },
       };
       finalizaPedidoByIdCliente(db, carrinho, user?.id || "", dadosEnvio)
         .then(() => {
@@ -63,7 +68,8 @@ export function ConfirmaPedido({
             ),
           });
         })
-        .catch(() => {
+        .catch((e) => {
+          console.log(e)
           toast({
             title: "Falha na criação do pedido",
             variant: "destructive",

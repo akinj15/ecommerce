@@ -138,7 +138,6 @@ export const getCondicoesDePagamento = https.onRequest(async (req, resp) => {
   }
 });
 
-
 export const noCriaCliente = onDocumentCreated(
   "/cliente/{clienteId}",
   async (

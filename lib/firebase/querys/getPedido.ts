@@ -21,7 +21,7 @@ export async function getPedidosByClienteId(
       emissao: dt.emissao,
       status: dt.status,
       chcriacao: dt.chcriacao,
-      cliente: null
+      cliente: dt.cliente,
     });
   });
   return res;
@@ -44,7 +44,7 @@ export async function getPedidoById(
       emissao: dt.emissao,
       status: dt.status,
       chcriacao: dt.chcriacao,
-      cliente: null,
+      cliente: dt.cliente,
     };
   }
   return res;
