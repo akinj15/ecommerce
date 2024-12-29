@@ -10,4 +10,8 @@ export const constantes = {
   rotaPagamentos: process.env.ROTA_PAGAMENTOS || "",
   rotaEstabelecimentos: process.env.ROTA_ESTABELECIMENTOS || "",
   token: process.env.TOKEN || "",
+  whatsappUrl: process.env.WHATSAPP_URL || "",
+  whatsappToken: process.env.WHATSAPP_TOKEN || "",
+  whatsappIdentificadorNumero: process.env.WHATSAPP_IDENTIFICADOR_NUMERO || "",
+  whatsappIdentificadorConta: process.env.WHATSAPP_IDENTIFICADOR_CONTA || "",
 };

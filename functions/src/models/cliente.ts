@@ -1,4 +1,4 @@
-export type Usuario = {
+export type Cliente = {
   id: string;
   chave?: string;
   nome: string;
@@ -20,7 +20,7 @@ export type Endereco = {
   complemento: string;
 };
 
-export type UsuarioResponse = {
+export type ClienteResponse = {
   erros: [];
   clientes: { chave: string }[];
   versao: number;

@@ -25,6 +25,7 @@ export type Pedido = {
   produtos: ItemCarrinho[] | null;
   cliente: {
     chave: number;
+    telefone: string;
     nome?: string;
     cpf?: string;
     id: string;
