@@ -28,7 +28,7 @@ import {
 import { useApplication } from "./applicationProvider";
 import { useToast } from "@/hooks/use-toast";
 import { FormEndereco } from "./formEndereco";
-import { LuMoreVertical, LuUser } from "react-icons/lu";
+import { LuEllipsisVertical, LuUser } from "react-icons/lu";
 
 const formSchema = z.object({
   nome: z.string(),
@@ -86,10 +86,13 @@ export function ProfileForm({
   }, [form, wTelefone]);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen} >
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
 
-      <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={e => e.preventDefault()}>
+      <DialogContent
+        className="sm:max-w-[425px]"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>
             {" "}
@@ -167,7 +170,7 @@ export function ProfileForm({
                   </p>
                 </div>
                 <div>
-                  <LuMoreVertical />
+                  <LuEllipsisVertical />
                 </div>
               </div>
             </FormEndereco>

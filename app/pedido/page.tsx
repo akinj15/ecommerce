@@ -1,19 +1,21 @@
 "use client"
 import { useApplication } from "@/components/applicationProvider";
 import { Card, CardContent } from "@/components/ui/card";
-import { useQuery } from "@/lib/firebase/firebaseQuery";
 import { db } from "@/lib/firebase/instances";
 import { getPedidosByClienteId } from "@/lib/firebase/querys/getPedido";
 import { Pedido } from "@/types/pedido";
 import { Separator } from "@radix-ui/react-select";
 import { LuMapPin } from "react-icons/lu";
 import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 
 export default function ListaPedidos() {
   const { user } = useApplication();
   const router = useRouter();
 
-  const { data: pedidos } = useQuery<Pedido[]>(() => getPedidosByClienteId(db ,{ id: user?.id || ""}));
+  const getPedido = async (): Promise<Pedido[]> => getPedidosByClienteId(db, { id: user?.id || "" });
+  const query = useQuery({ queryKey: ["getPedidos"], queryFn: getPedido });
+  const pedidos = query.data;
 
   return (
     <>

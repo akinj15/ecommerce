@@ -9,6 +9,10 @@ import { OPTLogin } from "./OPTLogin";
 import { ItemCarrinho, Usuario } from "@/types/usuario";
 import { Endereco } from "@/types/endereco";
 import { Estabelecimento } from "@/types/estabelecimentos";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+// Create a client
+const queryClient = new QueryClient()
 
 type ApplicationContextType = {
   userAuth: User | null;
@@ -95,11 +99,17 @@ export default function ApplicationProvider({ children }: { children: React.Reac
   }
   if (!userAuth) {
     return (
-      <ApplicationContext.Provider value={value}>
-        <OPTLogin />
-      </ApplicationContext.Provider>
+      <QueryClientProvider client={queryClient}>
+        <ApplicationContext.Provider value={value}>
+          <OPTLogin />
+        </ApplicationContext.Provider>
+      </QueryClientProvider>
     );
   }
-  return <ApplicationContext.Provider value={value}>{children}</ApplicationContext.Provider>;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ApplicationContext.Provider value={value}>{children}</ApplicationContext.Provider>
+    </QueryClientProvider>
+  );
 }
 export const useApplication = () => useContext(ApplicationContext);

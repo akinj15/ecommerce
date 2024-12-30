@@ -2,7 +2,6 @@
 import { useApplication } from "@/components/applicationProvider";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { useQuery } from "@/lib/firebase/firebaseQuery";
 import { db } from "@/lib/firebase/instances";
 import { getPedidoById } from "@/lib/firebase/querys/getPedido";
 import { Pedido } from "@/types/pedido";
@@ -10,6 +9,10 @@ import { use } from "react";
 import { CiMoneyBill } from "react-icons/ci";
 import { FaPix } from "react-icons/fa6";
 import { LuCreditCard, LuMapPin, LuTruck } from "react-icons/lu";
+import {
+  useQuery,
+} from "@tanstack/react-query";
+import Link from "next/link";
 
 export default function PhotoModal({
   params,
@@ -19,12 +22,15 @@ export default function PhotoModal({
   const param = use(params);
   const { user } = useApplication();
 
-  const { data: pedido } = useQuery<Pedido>(() =>
+  const getPedido = async (): Promise<Pedido> =>
     getPedidoById(db, {
       id: param?.id || "",
       idCliente: user?.id || "",
-    })
-  );
+    });
+
+  const query = useQuery({ queryKey: ["getPedido"], queryFn: getPedido });
+  const pedido = query.data;
+
   const custoTotal = (() => {
     let precoTotal = 0;
     pedido?.produtos?.forEach((e) => (precoTotal += e.preco * e.quantidade));
@@ -102,7 +108,9 @@ export default function PhotoModal({
         </div>
 
         <div className="mt-4">
-          <Button className="w-full">voltar</Button>
+          <Link href={"/pedido"}>
+            <Button className="w-full">voltar</Button>
+          </Link>
         </div>
       </div>
     </>

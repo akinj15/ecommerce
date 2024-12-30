@@ -34,7 +34,7 @@ export class PedidoService {
           nome: dados.pedido.status.nome,
           // mensagem: dados.pedido.status.mensagem,
         };
-        if (dados.pedido.status.mensagem) this.enviaMensagemWhatsapp(pedido);
+        this.enviaMensagemWhatsapp(pedido);
       }
     } finally {
       await this.db

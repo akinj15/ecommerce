@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { LuMoreVertical, LuTruck } from "react-icons/lu";
+import { LuEllipsisVertical, LuTruck } from "react-icons/lu";
 import { NovoPedido } from "@/types/pedido";
 
 interface IEnderecoCheckout {
@@ -121,7 +121,7 @@ export default function EnderecoCheckout({
                         </p>
                       </div>
                       <div>
-                        <LuMoreVertical />
+                        <LuEllipsisVertical />
                       </div>
                     </div>
                   </FormEndereco>
