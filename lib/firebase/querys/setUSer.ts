@@ -99,7 +99,9 @@ export async function finalizaPedidoByIdCliente(
   }
   console.log(dt);
 
-  await addDoc(collection(db, "cliente", userId, "pedido"), dt);
+  const docref = await addDoc(collection(db, "cliente", userId, "pedido"), dt);
 
   await batch.commit();
+
+  return docref.id
 }

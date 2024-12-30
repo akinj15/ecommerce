@@ -32,10 +32,10 @@ export class PedidoService {
         pedido.status = {
           codigo: dados.pedido.status.codigo,
           nome: dados.pedido.status.nome,
-          // mensagem: dados.pedido.status.mensagem,
+          mensagem: dados.pedido.status.mensagem,
         };
+        if (dados.pedido.status.mensagem) this.enviaMensagemWhatsapp(pedido);
       }
-      this.enviaMensagemWhatsapp(pedido);
     } finally {
       await this.db
         .collection("/cliente")
@@ -95,16 +95,10 @@ export class PedidoService {
           "Content-Type": "application/json",
         },
       };
-      console.log("url", url);
-      console.log("body", body);
-      console.log("header", header);
 
       const res = await axios.post(url, body, header);
-      console.log(res.status);
-      console.log(res.data);
       return res.data;
     } catch (error) {
-      console.log(error);
       throw error;
     }
   };

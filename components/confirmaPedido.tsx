@@ -21,6 +21,7 @@ import { Separator } from "./ui/separator";
 import { FaPix } from "react-icons/fa6";
 import { CiMoneyBill } from "react-icons/ci";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 export function ConfirmaPedido({
   children,
@@ -31,6 +32,7 @@ export function ConfirmaPedido({
   dados: NovoPedido | null;
   fechaModal: () => void;
 }>) {
+  const router = useRouter();
   const [openForm, setOpenForm] = useState(false);
   const { user, runQuery, carrinho } = useApplication();
   const { toast } = useToast();
@@ -59,7 +61,7 @@ export function ConfirmaPedido({
         },
       };
       finalizaPedidoByIdCliente(db, carrinho, user?.id || "", dadosEnvio)
-        .then(() => {
+        .then((e) => {
           fechaModal();
           runQuery();
           toast({
@@ -68,6 +70,7 @@ export function ConfirmaPedido({
               "botton-0 left-0"
             ),
           });
+          router.push("/pedido/" + e);
         })
         .catch((e) => {
           console.log(e)
