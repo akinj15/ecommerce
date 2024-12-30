@@ -32,7 +32,7 @@ export class PedidoService {
         pedido.status = {
           codigo: dados.pedido.status.codigo,
           nome: dados.pedido.status.nome,
-          mensagem: dados.pedido.status.mensagem,
+          // mensagem: dados.pedido.status.mensagem,
         };
         if (dados.pedido.status.mensagem) this.enviaMensagemWhatsapp(pedido);
       }
