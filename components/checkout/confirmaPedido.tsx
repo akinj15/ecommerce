@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { db } from "@/lib/firebase/instances";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import {
   Dialog,
   DialogContent,
@@ -11,13 +11,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useApplication } from "./applicationProvider";
+import { useApplication } from "../applicationProvider";
 import { useToast } from "@/hooks/use-toast";
 
 import { NovoPedido, Pedido } from "@/types/pedido";
 import { finalizaPedidoByIdCliente } from "@/lib/firebase/querys/setUSer";
 import { LuCreditCard, LuMapPin, LuTruck } from "react-icons/lu";
-import { Separator } from "./ui/separator";
+import { Separator } from "../ui/separator";
 import { FaPix } from "react-icons/fa6";
 import { CiMoneyBill } from "react-icons/ci";
 import { cn } from "@/lib/utils";

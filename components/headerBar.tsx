@@ -1,9 +1,9 @@
 'use client'
 import { LuBox, LuShoppingBag, LuShoppingCart, LuUser } from "react-icons/lu";
 import { Button } from "@/components/ui/button";
-import { ProfileForm } from "@/components/formUser";
+import { ProfileForm } from "@/components/form/formUser";
 import { useApplication } from "@/components/applicationProvider";
-import Checkout from "./checkout";
+import Checkout from "./checkout/checkout";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 

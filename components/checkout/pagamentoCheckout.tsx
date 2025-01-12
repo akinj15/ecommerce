@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, } from "./ui/card";
+import { Card, CardHeader, CardTitle, } from "../ui/card";
 import { useState } from "react";
 import { NovoPedido } from "@/types/pedido";
 import { LuCreditCard } from "react-icons/lu";

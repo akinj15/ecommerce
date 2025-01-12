@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useApplication } from "./applicationProvider";
-import { FormEndereco } from "./formEndereco";
+import { FormEndereco } from "./form/formEndereco";
 import {
   Card,
   CardHeader,

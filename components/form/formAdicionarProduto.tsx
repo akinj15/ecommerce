@@ -11,11 +11,11 @@ import {
 } from "@/components/ui/dialog";
 
 import Image from "next/image";
-import semImagem from "../public/imagens/sem_foto.png";
+import semImagem from "../../public/imagens/sem_foto.png";
 import { LuShoppingCart, LuPlus, LuMinus } from "react-icons/lu";
 import { Produto } from "@/types/produtos";
 import { setItemCarrinhoByIdCliente } from "@/lib/firebase/querys/setUSer";
-import { useApplication } from "./applicationProvider";
+import { useApplication } from "../applicationProvider";
 import { useState } from "react";
 import { db } from "@/lib/firebase/instances";
 

@@ -1,4 +1,5 @@
-import { collection, Firestore, getDocs, limit, orderBy, Query, query, where } from "firebase/firestore";
+import { db } from "@/lib/firebase/instances";
+import { collection, getDocs, limit, orderBy, Query, query, where } from "firebase/firestore";
 
 type FilterProdutos = {
   classe: string;
@@ -21,7 +22,7 @@ function applyQueryFilters(q: Query, filter: FilterProdutos) {
   return q;
 }
 
-export async function getProdutos(db: Firestore, filters: FilterProdutos) {
+export async function getProdutos(filters: FilterProdutos) {
   let q = query(collection(db, "recursos"));
 
   q = applyQueryFilters(q, filters);

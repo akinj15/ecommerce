@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { LuPlus, LuMinus, LuX } from "react-icons/lu";
-import { useApplication } from "./applicationProvider";
+import { useApplication } from "../applicationProvider";
 import { useEffect, useState } from "react";
 import { db } from "@/lib/firebase/instances";
 import { ItemCarrinho } from "@/types/usuario";
@@ -13,7 +13,7 @@ import {
 import { LuShoppingCart } from "react-icons/lu";
 
 import Image from "next/image";
-import semImagem from "../public/imagens/semImagem.png";
+import semImagem from "../../public/imagens/semImagem.png";
 import { NovoPedido } from "@/types/pedido";
 import { ScrollArea } from "@/components/ui/scroll-area";
 

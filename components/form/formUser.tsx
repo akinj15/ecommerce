@@ -16,7 +16,7 @@ import { useEffect, useState } from "react";
 import { formatCpfCnpj, formatNumber } from "@/lib/format";
 import { db } from "@/lib/firebase/instances";
 import { setClienteById } from "@/lib/firebase/querys/setUSer";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import {
   Dialog,
   DialogContent,
@@ -25,7 +25,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useApplication } from "./applicationProvider";
+import { useApplication } from "../applicationProvider";
 import { useToast } from "@/hooks/use-toast";
 import { FormEndereco } from "./formEndereco";
 import { LuEllipsisVertical, LuUser } from "react-icons/lu";

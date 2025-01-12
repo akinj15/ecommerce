@@ -11,9 +11,9 @@ import {
 // import { useApplication } from "./applicationProvider";
 import { useState } from "react";
 
-import CarrinhoCheckout from "@/components/carrinhoCheckout";
+import CarrinhoCheckout from "@/components/checkout/carrinhoCheckout";
 import EnderecoCheckout from "@/components/enderecoCheckout";
-import PagamentoCheckout from "@/components/pagamentoCheckout";
+import PagamentoCheckout from "@/components/checkout/pagamentoCheckout";
 import { NovoPedido } from "@/types/pedido";
 import PedidoCheckout from "./pedidoCheckout";
 

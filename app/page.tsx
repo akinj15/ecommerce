@@ -1,4 +1,4 @@
-import { ListaProdutos } from "@/components/listaProdutos";
+import { ListaProdutos } from "@/components/list/listaProdutos";
 
 export default function Home() {
   return (
