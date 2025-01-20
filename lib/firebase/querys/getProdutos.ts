@@ -1,10 +1,10 @@
 import { db } from "@/lib/firebase/instances";
-import { collection, getDocs, limit, orderBy, Query, query, where } from "firebase/firestore";
+import { collection, DocumentData, getDocs, limit, orderBy, Query, query, QueryDocumentSnapshot, startAfter, where } from "firebase/firestore";
 
 type FilterProdutos = {
-  classe: string;
-  limit?: number;
-  orderBy?: string;
+  classe?: string;
+  lastVisible: QueryDocumentSnapshot<DocumentData, DocumentData> | null;
+  limit: number;
 };
 
 
@@ -12,22 +12,30 @@ function applyQueryFilters(q: Query, filter: FilterProdutos) {
   if (filter && filter.classe) {
     q = query(q, where("classe", "==", filter.classe));
   }
-  if (filter && filter.orderBy) {
-    q = query(q, orderBy(filter.orderBy));
+
+  q = query(q, orderBy("classe"));
+
+  q = query(q, limit(filter.limit));
+  
+  q = query(q, orderBy("chave", "desc"));
+
+  if (filter && filter.lastVisible) {
+    q = query(q, startAfter(filter.lastVisible));
   }
-  if (filter && filter.limit) {
-    q = query(q, limit(filter.limit));
-  }
+
   q = query(q, where("preco", ">", 0));
+
   return q;
 }
 
 export async function getProdutos(filters: FilterProdutos) {
+  let ultimo = false;
   let q = query(collection(db, "recursos"));
 
   q = applyQueryFilters(q, filters);
   const results = await getDocs(q);
-  return results.docs.map((doc) => {
+
+  const produtos = results.docs.map((doc) => {
     const dt = doc.data();
 
     return {
@@ -55,4 +63,18 @@ export async function getProdutos(filters: FilterProdutos) {
       },
     };
   });
+  if (results.docs.length == filters.limit) {
+    produtos.pop();
+  } else {
+    ultimo = true;
+  }
+
+  return {
+    pageParams: {
+      lastVisible: results.docs[results.docs.length - 1],
+      classe: filters.classe,
+      ultimo: ultimo,
+    },
+    produtos: produtos,
+  };
 }

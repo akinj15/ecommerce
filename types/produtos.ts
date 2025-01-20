@@ -33,4 +33,5 @@ export interface Produto {
   nome: string;
   marca: string;
   ncm: string;
+  id: string;
 }
