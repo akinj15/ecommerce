@@ -97,27 +97,15 @@ export function FormEndereco({
       try {
         const endereco = { ...values, cliente: user?.chave || 0 };
         if (dados?.id) {
-          updateEnderecoByIdCliente(
-            db,
-            user?.id || "",
-            dados.id,
-            endereco
-          ).then(() => {
-            toast({
-              title: "Sucesso",
-            });
-            runQuery();
-            setOpenFormEndereco(false);
-          });
+          updateEnderecoByIdCliente(db, user?.id || "", dados.id, endereco);
         } else {
-          setEnderecoByIdCliente(db, user?.id || "", endereco).then(() => {
-            toast({
-              title: "Sucesso",
-            });
-            runQuery();
-            setOpenFormEndereco(false);
-          });
+          await setEnderecoByIdCliente(db, user?.id || "", endereco);
         }
+        toast({
+          title: "Sucesso",
+        });
+        runQuery();
+        setOpenFormEndereco(false);
       } catch (e) {
         console.log(e);
         toast({
@@ -130,31 +118,30 @@ export function FormEndereco({
   useEffect(() => {
     if (cep && cep.length == 8) {
       startTransitionCep(async () => {
-        fetch(`https://viacep.com.br/ws/${cep}/json/`)
-          .then((e) =>
-            e.json().then((data) => {
-              if (data.erro == "true") {
-                toast({
-                  title: "Digite cep novamente.",
-                  variant: "destructive",
-                });
-                return;
-              }
-
-              formEndereco.setValue("rua", data.logradouro);
-              formEndereco.setValue("estado", data.estado);
-              formEndereco.setValue("uf", data.uf);
-              formEndereco.setValue("cidade", data.localidade);
-              formEndereco.setValue("bairro", data.bairro);
-              setNovoEndereco(false);
-            })
-          )
-          .catch(() => {
+        try {
+          const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+          const data = await res.json();
+          if (data.erro == "true") {
             toast({
               title: "Digite cep novamente.",
               variant: "destructive",
             });
+            return;
+          }
+
+          formEndereco.setValue("rua", data.logradouro);
+          formEndereco.setValue("estado", data.estado);
+          formEndereco.setValue("uf", data.uf);
+          formEndereco.setValue("cidade", data.localidade);
+          formEndereco.setValue("bairro", data.bairro);
+          setNovoEndereco(false);
+        } catch (e) {
+          console.log(e);
+          toast({
+            title: "Digite cep novamente.",
+            variant: "destructive",
           });
+        }
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

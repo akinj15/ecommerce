@@ -37,28 +37,27 @@ export function ListaProdutos() {
 
   const getFirstProdutos = async () => {
     startTransition(async () => {
-      getProdutos({ classe: classe, lastVisible: ultimaChave, limit: 25 }).then(
-        (e) => {
-          setProdutos(e.produtos);
-          setUltimaChave(e.pageParams.lastVisible);
-          setUltimo(e.pageParams.ultimo);
-        }
-      );
+      const res = await getProdutos({
+        classe: classe,
+        lastVisible: ultimaChave,
+        limit: 100,
+      });
+        setProdutos(res.produtos);
+        setUltimaChave(res.pageParams.lastVisible);
+        setUltimo(res.pageParams.ultimo);
+      
     });
   };
 
   
   const getNextProdutos = async () => {
     startTransition(async () => {
-      getProdutos({ classe: classe, lastVisible: ultimaChave, limit: 25 }).then(
-        (e) => {
-          let prod = produtos || [];
-          prod = prod.concat(e.produtos);
-          setProdutos(prod);
-          setUltimaChave(e.pageParams.lastVisible);
-          setUltimo(e.pageParams.ultimo);
-        }
-      );
+      const res = await getProdutos({ classe: classe, lastVisible: ultimaChave, limit: 100 });
+      let prod = produtos || [];
+      prod = prod.concat(res.produtos);
+      setProdutos(prod);
+      setUltimaChave(res.pageParams.lastVisible);
+      setUltimo(res.pageParams.ultimo);
     });
   };
 
@@ -144,7 +143,11 @@ export function ListaProdutos() {
             </>
           ))}
         </div>
-        {isPending && <Loading />}
+        {isPending && (
+          <div className="h-20 mb-16">
+            <Loading />
+          </div>
+        )}
         <div ref={observerTarget}></div>
       </div>
     </div>
