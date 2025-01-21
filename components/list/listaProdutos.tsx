@@ -13,7 +13,7 @@ import ProdutoModal from "../form/formAdicionarProduto";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
-import { Loading } from "@/components/Loading";
+import { Loading } from "../Loading";
 
 export function ListaProdutos() {
   const [classe, setClasse] = useState("");
