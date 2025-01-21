@@ -1,5 +1,5 @@
 
-export const Loading = () => {
+export const SimpleLoading = () => {
   return (
     <div className="w-full flex justify-center items-center">
       <div role="status">

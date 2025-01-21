@@ -13,7 +13,7 @@ import ProdutoModal from "../form/formAdicionarProduto";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
-import { Loading } from "../Loading";
+import { SimpleLoading } from "../SimpleLoading";
 
 export function ListaProdutos() {
   const [classe, setClasse] = useState("");
@@ -145,7 +145,7 @@ export function ListaProdutos() {
         </div>
         {isPending && (
           <div className="h-20 mb-16">
-            <Loading />
+            <SimpleLoading />
           </div>
         )}
         <div ref={observerTarget}></div>
