@@ -12,9 +12,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { db } from "@/lib/firebase/instances";
-import { setEnderecoByIdCliente, updateEnderecoByIdCliente } from "@/lib/firebase/querys/setUSer";
+import {
+  setEnderecoByIdCliente,
+  updateEnderecoByIdCliente,
+} from "@/lib/firebase/querys/setUSer";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -34,6 +37,7 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { Endereco } from "@/types/endereco";
+import { FullScreenLoading } from "@/components/FullScreenLoading";
 
 const formSchema = z.object({
   chave: z.number(),
@@ -60,6 +64,8 @@ export function FormEndereco({
   const { user, runQuery, loading } = useApplication();
   const [novoEndereco, setNovoEndereco] = useState(!loading && !dados);
   const { toast } = useToast();
+  const [isPendingCep, startTransitionCep] = useTransition();
+  const [isPending, startTransition] = useTransition();
 
   const formEndereco = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -87,59 +93,82 @@ export function FormEndereco({
   });
 
   function onSubmitEndereco(values: z.infer<typeof formSchema>) {
-    try {
-      const endereco = { ...values, cliente: user?.chave || 0 }; 
-      if (dados?.id) {
-        updateEnderecoByIdCliente(db, user?.id || "", dados.id, endereco).then(() => {
-          toast({
-            title: "Sucesso",
+    startTransition(async () => {
+      try {
+        const endereco = { ...values, cliente: user?.chave || 0 };
+        if (dados?.id) {
+          updateEnderecoByIdCliente(
+            db,
+            user?.id || "",
+            dados.id,
+            endereco
+          ).then(() => {
+            toast({
+              title: "Sucesso",
+            });
+            runQuery();
+            setOpenFormEndereco(false);
           });
-          runQuery();
-          setOpenFormEndereco(false);
-        });
-      } else {
-        setEnderecoByIdCliente(db, user?.id || "", endereco).then(() => {
-          toast({
-            title: "Sucesso",
+        } else {
+          setEnderecoByIdCliente(db, user?.id || "", endereco).then(() => {
+            toast({
+              title: "Sucesso",
+            });
+            runQuery();
+            setOpenFormEndereco(false);
           });
-          runQuery();
-          setOpenFormEndereco(false);
+        }
+      } catch (e) {
+        console.log(e);
+        toast({
+          title: "Falha ao salvar",
         });
       }
-
-    } catch (e) {
-      console.log(e);
-      toast({
-        title: "Falha ao salvar",
-      });
-    }
+    });
   }
 
   useEffect(() => {
     if (cep && cep.length == 8) {
-      fetch(`https://viacep.com.br/ws/${cep}/json/`).then((e) =>
-        e.json().then((data) => {
-          formEndereco.setValue("rua", data.logradouro);
-          formEndereco.setValue("estado", data.estado);
-          formEndereco.setValue("uf", data.uf);
-          formEndereco.setValue("cidade", data.localidade);
-          formEndereco.setValue("bairro", data.bairro);
-          setNovoEndereco(false);
-        })
-      ).catch(() => {
-        toast({
-          title: "Digite cep novamente.",
-          variant: "destructive"
-        });
+      startTransitionCep(async () => {
+        fetch(`https://viacep.com.br/ws/${cep}/json/`)
+          .then((e) =>
+            e.json().then((data) => {
+              if (data.erro == "true") {
+                toast({
+                  title: "Digite cep novamente.",
+                  variant: "destructive",
+                });
+                return;
+              }
+
+              formEndereco.setValue("rua", data.logradouro);
+              formEndereco.setValue("estado", data.estado);
+              formEndereco.setValue("uf", data.uf);
+              formEndereco.setValue("cidade", data.localidade);
+              formEndereco.setValue("bairro", data.bairro);
+              setNovoEndereco(false);
+            })
+          )
+          .catch(() => {
+            toast({
+              title: "Digite cep novamente.",
+              variant: "destructive",
+            });
+          });
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cep]);
 
   return (
     <Dialog open={openFormEndereco} onOpenChange={setOpenFormEndereco}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={e => e.preventDefault()}>
+      <DialogContent
+        className="sm:max-w-[425px]"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
+        {(isPendingCep || isPending) && <FullScreenLoading />}
+
         <DialogHeader>
           <DialogTitle>Endereço</DialogTitle>
           <DialogDescription>Digite o seu cep.</DialogDescription>

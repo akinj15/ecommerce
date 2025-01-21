@@ -4,7 +4,7 @@ import { auth, db } from "@/lib/firebase/instances";
 import { getCarrinhoByClienteId, getClientes, getEnderecoByClienteId, getEstabelecimentos } from "@/lib/firebase/querys/getUser";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { Loading } from "./loading";
+import { FullScreenLoading } from "./FullScreenLoading";
 import { OPTLogin } from "./OPTLogin";
 import { ItemCarrinho, Usuario } from "@/types/usuario";
 import { Endereco } from "@/types/endereco";
@@ -95,7 +95,7 @@ export default function ApplicationProvider({ children }: { children: React.Reac
   };
 
   if (loading) { 
-    return <Loading />;
+    return <FullScreenLoading />;
   }
   if (!userAuth) {
     return (

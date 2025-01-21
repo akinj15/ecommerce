@@ -13,6 +13,7 @@ import ProdutoModal from "../form/formAdicionarProduto";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
+import { Loading } from "@/components/Loading";
 
 export function ListaProdutos() {
   const [classe, setClasse] = useState("");
@@ -94,10 +95,6 @@ export function ListaProdutos() {
   return (
     <div className="">
       <div className="mb-6">
-        {/* <div className="">
-          <Label htmlFor="picture">Pesquisa</Label>
-          <Input />
-        </div> */}
         <div>
           <Label>Categorias</Label>
 
@@ -118,37 +115,36 @@ export function ListaProdutos() {
         </div>
       </div>
       <div>
-        <div className="">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:lg:grid-cols-6 gap-4 my-4">
-            {produtos?.map((product) => (
-              <>
-                <ProdutoModal key={product.id} produto={product}>
-                  <Card
-                    key={product.id + "card"}
-                    className="cursor-pointer hover:shadow-xl transition ease-in-out delay-150"
-                  >
-                    <CardContent className="p-4">
-                      <Image
-                        src={
-                          product.imgUrl.replace("http://", "https://") ||
-                          semImagem
-                        }
-                        alt={product.nome}
-                        width={200}
-                        height={200}
-                        className="w-full h-50 object-cover mb-2"
-                      />
-                      <h3 className="text-sm font-semibold text-ellipsis overflow-hidden whitespace-nowrap">
-                        {product.codigo}
-                      </h3>
-                      <p className="font-bold">${product.preco.toFixed(2)}</p>
-                    </CardContent>
-                  </Card>
-                </ProdutoModal>
-              </>
-            ))}
-          </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:lg:grid-cols-6 gap-4 my-4">
+          {produtos?.map((product) => (
+            <>
+              <ProdutoModal key={product.id} produto={product}>
+                <Card
+                  key={product.id + "card"}
+                  className="cursor-pointer hover:shadow-xl transition ease-in-out delay-150"
+                >
+                  <CardContent className="p-4">
+                    <Image
+                      src={
+                        product.imgUrl.replace("http://", "https://") ||
+                        semImagem
+                      }
+                      alt={product.nome}
+                      width={200}
+                      height={200}
+                      className="w-full h-50 object-cover mb-2"
+                    />
+                    <h3 className="text-sm font-semibold text-ellipsis overflow-hidden whitespace-nowrap">
+                      {product.codigo}
+                    </h3>
+                    <p className="font-bold">${product.preco.toFixed(2)}</p>
+                  </CardContent>
+                </Card>
+              </ProdutoModal>
+            </>
+          ))}
         </div>
+        {isPending && <Loading />}
         <div ref={observerTarget}></div>
       </div>
     </div>
