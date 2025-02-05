@@ -11,7 +11,7 @@ export const HeaderBar = () => {
   const router = useRouter();
   const { carrinho } = useApplication();
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:border-border">
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:border-border min-[1800px]:max-w-[1536px] min-[1800px]:border-x mx-auto">
       <div className=" flex h-14  items-center">
         <div className="mx-2">
           <div className="flex items-center space-x-4">

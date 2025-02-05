@@ -4,19 +4,21 @@ import { useQuery } from "@tanstack/react-query";
 import { Produto } from "@/types/produtos";
 import { getClassesRecursos } from "@/lib/firebase/querys/getClasseProdutos";
 import { getProdutos } from "@/lib/firebase/querys/getProdutos";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { ChangeEvent, useEffect, useRef, useState, useTransition } from "react";
 import { Card, CardContent } from "../ui/card";
 import Image from "next/image";
 import semImagem from "../../public/imagens/sem_foto.png";
-import { Label } from "../ui/label";
 import ProdutoModal from "../form/formAdicionarProduto";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
 import { SimpleLoading } from "../SimpleLoading";
+import { Input } from "../ui/input";
+import { LuSearch } from "react-icons/lu";
 
 export function ListaProdutos() {
   const [classe, setClasse] = useState("");
+  const [filtro, setFiltro] = useState("");
   const [ultimaChave, setUltimaChave] = useState<QueryDocumentSnapshot<DocumentData, DocumentData> | null>(null);
   const [produtos, setProdutos] = useState<Produto[]>();
   const [ultimo, setUltimo] = useState(false);
@@ -91,10 +93,45 @@ export function ListaProdutos() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [observerTarget, classe, ultimaChave, isPending]);
 
+  
+
   return (
     <div className="">
       <div className="mb-6">
-        <div>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="relative flex-1 flex justify-center items-center">
+            <LuSearch className="absolute left-2.5 top-4.5 h-4 w-4 text-gray-500" />
+            <Input
+              className="pl-8"
+              placeholder="Search products..."
+              type="search"
+              value={filtro}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => setFiltro(e.target.value)}
+              onKeyUp={(e) => {
+                  console.log(e.key == "Enter");
+              }
+            }
+            />
+          </div>
+          <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0">
+            <ScrollArea className=" whitespace-nowrap ">
+              <div className="flex w-max space-x-4 py-4">
+                <Badge onClick={() => handlerClasse("")}>todos</Badge>
+                {classes?.map((classe) => (
+                  <Badge
+                    key={classe.id}
+                    onClick={() => handlerClasse(classe.nome)}
+                  >
+                    {classe.nome}
+                  </Badge>
+                ))}
+              </div>
+              <ScrollBar orientation="horizontal" />
+            </ScrollArea>
+          </div>
+        </div>
+
+        {/* <div>
           <Label>Categorias</Label>
 
           <ScrollArea className=" whitespace-nowrap ">
@@ -111,7 +148,7 @@ export function ListaProdutos() {
             </div>
             <ScrollBar orientation="horizontal" />
           </ScrollArea>
-        </div>
+        </div> */}
       </div>
       <div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:lg:grid-cols-6 gap-4 my-4">
