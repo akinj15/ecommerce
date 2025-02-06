@@ -3,12 +3,20 @@ import { collection, DocumentData, getDocs, limit, orderBy, Query, query, QueryD
 
 type FilterProdutos = {
   classe?: string;
+  pesquisa?: string;
   lastVisible: QueryDocumentSnapshot<DocumentData, DocumentData> | null;
   limit: number;
 };
 
 
 function applyQueryFilters(q: Query, filter: FilterProdutos) {
+  if (filter && filter.pesquisa) {
+    q = query(
+      q,
+      where("arryList", "array-contains-any", filter.pesquisa.toUpperCase().split(" "))
+    );
+  }
+
   if (filter && filter.classe) {
     q = query(q, where("classe", "==", filter.classe));
   }
@@ -68,7 +76,6 @@ export async function getProdutos(filters: FilterProdutos) {
   } else {
     ultimo = true;
   }
-
   return {
     pageParams: {
       lastVisible: results.docs[results.docs.length - 1],

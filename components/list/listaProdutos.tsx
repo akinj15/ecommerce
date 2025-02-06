@@ -93,7 +93,20 @@ export function ListaProdutos() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [observerTarget, classe, ultimaChave, isPending]);
 
-  
+  const handleFilter = async () => {
+    startTransition(async () => {
+        const res = await getProdutos({
+          classe: "",
+          lastVisible: null,
+          limit: 100,
+          pesquisa: filtro,
+        });
+        setProdutos(res.produtos);
+        setUltimaChave(res.pageParams.lastVisible);
+        setUltimo(res.pageParams.ultimo);
+        setClasse("");
+    });
+  };
 
   return (
     <div className="">
@@ -108,7 +121,7 @@ export function ListaProdutos() {
               value={filtro}
               onChange={(e: ChangeEvent<HTMLInputElement>) => setFiltro(e.target.value)}
               onKeyUp={(e) => {
-                  console.log(e.key == "Enter");
+                  if (e.key == "Enter") handleFilter();
               }
             }
             />
