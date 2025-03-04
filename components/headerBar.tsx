@@ -6,6 +6,7 @@ import { useApplication } from "@/components/applicationProvider";
 import Checkout from "./checkout/checkout";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { ThemeToggle } from "./toggleTheme";
 
 export const HeaderBar = () => {
   const router = useRouter();
@@ -21,6 +22,7 @@ export const HeaderBar = () => {
           </div>
         </div>
         <div className="flex flex-1 items-center space-x-2 justify-end mx-2">
+          <ThemeToggle />
           <Button
             variant={"ghost"}
             className="relative "
