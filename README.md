@@ -1,8 +1,15 @@
 
 ## Getting Started
 
-First, run the development server:
+run the deployment in firebase server:
 
 ```bash
-yarn dev
+cd functions && npm install && npm run deploy 
 ```
+
+run the development server:
+
+```bash
+cd .. && npm install && npm run dev
+```
+
